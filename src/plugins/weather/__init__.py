@@ -12,7 +12,7 @@ config = Config(**global_config.dict())
 
 weather = on_command("天气", rule=not_to_me(), permission=Permission(), priority=5)
 
-WEATHER_ICON_DIR = f"{getcwd()}/store/weather-icon/"
+WEATHER_ICON_DIR = f"{config.base_dir}/store/weather-icon/"
 
 
 @weather.handle()
@@ -30,7 +30,6 @@ async def handle_city(bot: Bot, event: Event, state: dict):
         await weather.finish("请求API失败！请联系管理员！")
     if city_list["code"] == "204" or city_list["code"] == "404":
         await weather.finish("无您想要的地区信息！")
-    logger.debug(city_list)
     state["location"] = city_list["location"]
     if len(city_list["location"]) == 1 or \
             city_list["location"][0]["name"] != city_list["location"][1]["name"]:
@@ -69,7 +68,7 @@ async def handle_city_list(bot: Bot, event: Event, state: dict):
         reply.append(f"PM2.5：{air_now['now']['pm2p5']} PM10：{air_now['now']['pm10']}\n")
         reply.append(f"空气主要污染物：{air_now['now']['primary']}\n")
 
-    status_tomorrow = fetch_weather_data(config.weather_api_key, city_id, "3d")
+    status_tomorrow = await fetch_weather_data(config.weather_api_key, city_id, "3d")
     if status_now is None:
         reply.append("获取明日天气失败！\n")
     else:
@@ -83,4 +82,5 @@ async def handle_city_list(bot: Bot, event: Event, state: dict):
         reply.append("\n")
         reply.append(f"最高温度：{tom['tempMax']}℃ 最低温度：{tom['tempMin']}℃ 湿度：{tom['humidity']}%\n")
         reply.append(f"白天风力等级：{tom['windScaleDay']}级 夜间风力等级：{tom['windScaleNight']}级\n")
+    logger.debug(str(reply))
     await weather.finish(reply)
