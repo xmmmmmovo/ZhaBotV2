@@ -1,5 +1,5 @@
-from nonebot import on_command, Bot, logger
-from nonebot.adapters.cqhttp import Event
+from nonebot import on_command, logger
+from nonebot.adapters.cqhttp import Event, Bot
 from nonebot.permission import Permission
 
 from src.common.rules import not_to_me
