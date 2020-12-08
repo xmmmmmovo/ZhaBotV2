@@ -4,6 +4,9 @@ RUN python3 -m pip config set global.index-url https://mirrors.aliyun.com/pypi/s
 
 RUN echo "Asia/Shanghai" > /etc/timezone
 
+#RUN apt-get update && \
+#    apt-get install unixodbc-dev -y
+
 COPY requirements.txt /app/
 
 RUN pip install nb-cli

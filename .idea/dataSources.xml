@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="bot.sqlite" uuid="f1991661-9418-447d-9408-ffcebe497dc4">
+    <data-source source="LOCAL" name="bot.db" uuid="7d4fe8ad-24b4-4167-a794-c017a9f87e67">
       <driver-ref>sqlite.xerial</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
-      <jdbc-url>jdbc:sqlite:E:\ZhaBotV2\store\bot.sqlite</jdbc-url>
+      <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/store/bot.db</jdbc-url>
     </data-source>
   </component>
 </project>
