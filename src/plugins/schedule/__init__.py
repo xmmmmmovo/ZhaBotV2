@@ -10,10 +10,10 @@ global_config = get_driver().config
 config = Config(**global_config.dict())
 
 scheduler: AsyncIOScheduler = require("nonebot_plugin_apscheduler").scheduler
-fetch_hitokoto_str = require("hitokoto").fetch_hitokoto_str
-fetch_city_data = require("weather").fetch_city_data
-get_weather_message = require("weather").get_weather_message
-get_air_message = require("weather").get_air_message
+fetch_hitokoto_str = require("src.plugins.hitokoto").fetch_hitokoto_str
+fetch_city_data = require("src.plugins.weather").fetch_city_data
+get_weather_message = require("src.plugins.weather").get_weather_message
+get_air_message = require("src.plugins.weather").get_air_message
 
 
 @scheduler.scheduled_job("cron", day="*", hour="7", minute="30", id="morning_task",

@@ -22,7 +22,12 @@ driver.register_adapter("cqhttp", CQHTTPBot)
 
 nonebot.load_plugin("nonebot_plugin_apscheduler")
 nonebot.load_plugin("nonebot_plugin_status")
-nonebot.load_plugins("./src/plugins")
+nonebot.load_plugin("src.plugins.chat")
+nonebot.load_plugin("src.plugins.echo")
+nonebot.load_plugin("src.plugins.hitokoto")
+nonebot.load_plugin("src.plugins.horserace")
+nonebot.load_plugin("src.plugins.weather")
+nonebot.load_plugin("src.plugins.schedule")
 
 # Modify some config / config depends on loaded configs
 #
