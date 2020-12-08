@@ -6,7 +6,7 @@ from .config import Config
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from time import localtime, strftime
 
-from .data_source import fetch_city_data, get_weather_message, get_air_message
+from .data_source import fetch_city_data, get_weather_message, get_air_message, fetch_hitokoto_str
 
 global_config = get_driver().config
 config = Config(**global_config.dict())
@@ -38,5 +38,6 @@ async def run_every_2_hour(**kwargs):
             id = location["id"]
             msg.extend(await get_weather_message(kwargs["key"], groups["place"], id))
             msg.extend(await get_air_message(kwargs["key"], id))
+            msg.append(f"一言：{await fetch_hitokoto_str()}")
             logger.debug(msg)
             await bot.send_group_msg(group_id=groups["id"], message=msg)

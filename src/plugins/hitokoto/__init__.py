@@ -3,11 +3,11 @@ from nonebot.adapters.cqhttp import Event, Bot
 from nonebot.permission import Permission
 
 from src.common.rules import not_to_me
+from .data_source import fetch_hitokoto_str
 
-echo = on_command("echo", rule=not_to_me(), permission=Permission(), priority=1)
+hitokoto = on_command("一言", rule=not_to_me(), permission=Permission(), priority=10)
 
 
-@echo.handle()
+@hitokoto.handle()
 async def handle_first_receive(bot: Bot, event: Event, state: dict):
-    logger.debug(event.message)
-    await echo.finish(event.message)
+    await hitokoto.finish(await fetch_hitokoto_str())

@@ -9,6 +9,7 @@ CITY_LOOKUP_URL = "https://geoapi.qweather.com/v2/city/lookup"
 WEATHER_API_URL = 'https://devapi.qweather.com/v7/weather/'
 RAIN_API_URL = 'https://devapi.qweather.com/v7/minutely/5m'
 AIR_API_URL = 'https://devapi.qweather.com/v7/air/now'
+HITOKOTO_URL = 'https://v1.hitokoto.cn?c=a&c=b&c=c&c=d&c=e&c=g&encode=text'
 
 
 @cached(ttl=8 * 60 * 60)
@@ -74,6 +75,15 @@ async def fetch_rain_data(key: str, id: str) -> Optional[Dict]:
             return None
         resp_json = resp.json()
         return resp_json
+
+
+async def fetch_hitokoto_str() -> Optional[str]:
+    async with httpx.AsyncClient() as client:
+        resp = await client.get(HITOKOTO_URL)
+        if resp.status_code != 200:
+            return None
+        return resp.text
+
 
 async def get_weather_message(key: str, city_name: str, city_id: str) -> Message:
     reply_today = Message()
