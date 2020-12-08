@@ -56,6 +56,7 @@ async def handle_city_list(bot: Bot, event: Event, state: dict):
     else:
         reply_today.append(f"******{city_name}天气如下******\n")
         reply_today.append(f"天气：{status_now['now']['text']}")
+        # TODO: 等风控过去了就取消注释
         # reply_today.append(MessageSegment.image(f"file:///{WEATHER_ICON_DIR}{status_now['now']['icon']}.png"))
         reply_today.append("\n")
         reply_today.append(f"体感温度：{status_now['now']['feelsLike']}℃ 湿度：{status_now['now']['humidity']}%\n")

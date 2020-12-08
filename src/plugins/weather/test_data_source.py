@@ -5,7 +5,6 @@ def test_fetch_city_data():
 
 
 def test_fetch_weather_data():
-
     assert False
 
 
