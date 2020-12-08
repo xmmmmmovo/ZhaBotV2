@@ -1,4 +1,4 @@
-from nonebot import get_driver, on_command, logger
+from nonebot import get_driver, on_command, logger, export
 from nonebot.adapters.cqhttp import Bot, Event, Message, MessageSegment
 from nonebot.permission import Permission
 
@@ -11,6 +11,9 @@ global_config = get_driver().config
 config = Config(**global_config.dict())
 
 weather = on_command("天气", rule=not_to_me(), permission=Permission(), priority=5)
+export().fetch_city_data = fetch_city_data
+export().get_weather_message = get_weather_message
+export().get_air_message = get_air_message
 
 WEATHER_ICON_DIR = f"{config.base_dir}/store/weather-icon/"
 

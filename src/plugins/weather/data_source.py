@@ -2,7 +2,7 @@ from typing import Dict, Optional
 
 import httpx
 from aiocache import cached
-from nonebot import logger
+from nonebot import logger, export
 from nonebot.adapters.cqhttp import Message
 
 CITY_LOOKUP_URL = "https://geoapi.qweather.com/v2/city/lookup"
@@ -74,6 +74,7 @@ async def fetch_rain_data(key: str, id: str) -> Optional[Dict]:
             return None
         resp_json = resp.json()
         return resp_json
+
 
 async def get_weather_message(key: str, city_name: str, city_id: str) -> Message:
     reply_today = Message()

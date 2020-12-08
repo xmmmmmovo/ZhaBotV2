@@ -2,3 +2,4 @@ aiocache==0.11.1
 httpx==0.16.1
 ujson==4.0.1
 msgpack==1.0.0
+aioodbc==0.3.3

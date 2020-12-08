@@ -1,6 +1,7 @@
 from typing import Optional
 
 import httpx
+from nonebot import export
 
 HITOKOTO_URL = 'https://v1.hitokoto.cn?c=a&c=b&c=c&c=d&c=e&c=g&encode=text'
 
