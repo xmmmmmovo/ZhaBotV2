@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="bot.db" uuid="7d4fe8ad-24b4-4167-a794-c017a9f87e67">
-      <driver-ref>sqlite.xerial</driver-ref>
+    <data-source source="LOCAL" name="@49.232.53.181" uuid="9f367be2-cef4-4162-922c-b3bfe92b1dbb">
+      <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
-      <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
-      <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/store/bot.db</jdbc-url>
+      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://49.232.53.181:44444</jdbc-url>
     </data-source>
   </component>
 </project>

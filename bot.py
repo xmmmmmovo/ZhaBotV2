@@ -22,7 +22,7 @@ driver.register_adapter("cqhttp", CQHTTPBot)
 
 nonebot.load_plugin("nonebot_plugin_apscheduler")
 nonebot.load_plugin("nonebot_plugin_status")
-nonebot.load_plugin("src.plugins.sqlite")
+nonebot.load_plugin("src.plugins.mysql")
 nonebot.load_plugin("src.plugins.chat")
 nonebot.load_plugin("src.plugins.echo")
 nonebot.load_plugin("src.plugins.hitokoto")
