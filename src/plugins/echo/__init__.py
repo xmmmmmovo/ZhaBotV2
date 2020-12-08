@@ -10,4 +10,4 @@ echo = on_command("echo", rule=not_to_me(), permission=Permission(), priority=4)
 @echo.handle()
 async def handle_first_receive(bot: Bot, event: Event, state: dict):
     logger.debug(event.message)
-    echo.finish(event.message)
+    await echo.finish(event.message)

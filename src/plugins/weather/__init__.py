@@ -48,39 +48,41 @@ async def handle_city_list(bot: Bot, event: Event, state: dict):
     city_id = city_list[idx]["id"]
     city_name = city_list[idx]["name"]
 
-    reply = Message()
+    reply_today = Message()
     status_now = await fetch_weather_data(config.weather_api_key, city_id, "now")
-    if status_now is None:
-        reply.append("获取当前天气失败！\n")
+    logger.debug(status_now)
+    if status_now is None or status_now["code"] != "200":
+        reply_today.append("获取当前天气失败！\n")
     else:
-        reply.append(f"******{city_name}天气如下******\n")
-        reply.append(f"天气：{status_now['now']['text']}")
-        reply.append(MessageSegment.image(f"file:///{WEATHER_ICON_DIR}{status_now['now']['icon']}.png"))
-        reply.append("\n")
-        reply.append(f"体感温度：{status_now['now']['feelsLike']}℃ 湿度：{status_now['now']['humidity']}%\n")
-        reply.append(f"风力等级：{status_now['now']['windScale']}级\n")
+        reply_today.append(f"******{city_name}天气如下******\n")
+        reply_today.append(f"天气：{status_now['now']['text']}")
+        # reply_today.append(MessageSegment.image(f"file:///{WEATHER_ICON_DIR}{status_now['now']['icon']}.png"))
+        reply_today.append("\n")
+        reply_today.append(f"体感温度：{status_now['now']['feelsLike']}℃ 湿度：{status_now['now']['humidity']}%\n")
+        reply_today.append(f"风力等级：{status_now['now']['windScale']}级\n")
 
     air_now = await fetch_air_data(config.weather_api_key, city_id)
-    if air_now is None:
-        reply.append("获取当前空气质量失败！\n")
+    if air_now is None or air_now["code"] != "200":
+        reply_today.append("获取当前空气质量失败！\n")
     else:
-        reply.append(f"空气质量：{air_now['now']['category']} 空气质量指数：{air_now['now']['aqi']}\n")
-        reply.append(f"PM2.5：{air_now['now']['pm2p5']} PM10：{air_now['now']['pm10']}\n")
-        reply.append(f"空气主要污染物：{air_now['now']['primary']}\n")
+        reply_today.append(f"空气质量：{air_now['now']['category']} 空气质量指数：{air_now['now']['aqi']}\n")
+        reply_today.append(f"PM2.5：{air_now['now']['pm2p5']} PM10：{air_now['now']['pm10']}\n")
+        reply_today.append(f"空气主要污染物：{air_now['now']['primary']}\n")
+    await weather.send(reply_today)
 
+    reply_tomorrow = Message()
     status_tomorrow = await fetch_weather_data(config.weather_api_key, city_id, "3d")
-    if status_now is None:
-        reply.append("获取明日天气失败！\n")
+    if status_tomorrow is None or status_tomorrow["code"] != "200":
+        reply_tomorrow.append("获取明日天气失败！\n")
     else:
         tom = status_tomorrow["daily"][1]
-        reply.append(f"******明日天气******\n")
-        reply.append(f"白天天气：{tom['textDay']}")
-        reply.append(MessageSegment.image(f"file:///{WEATHER_ICON_DIR}{tom['iconDay']}.png"))
-        reply.append("\n")
-        reply.append(f"夜间天气：{tom['textNight']}")
-        reply.append(MessageSegment.image(f"file:///{WEATHER_ICON_DIR}{tom['iconNight']}.png"))
-        reply.append("\n")
-        reply.append(f"最高温度：{tom['tempMax']}℃ 最低温度：{tom['tempMin']}℃ 湿度：{tom['humidity']}%\n")
-        reply.append(f"白天风力等级：{tom['windScaleDay']}级 夜间风力等级：{tom['windScaleNight']}级\n")
-    logger.debug(str(reply))
-    await weather.finish(reply)
+        reply_tomorrow.append(f"******{city_name}明日天气******\n")
+        reply_tomorrow.append(f"白天天气：{tom['textDay']}")
+        # reply_tomorrow.append(MessageSegment.image(f"file:///{WEATHER_ICON_DIR}{tom['iconDay']}.png"))
+        reply_tomorrow.append("\n")
+        reply_tomorrow.append(f"夜间天气：{tom['textNight']}")
+        # reply_tomorrow.append(MessageSegment.image(f"file:///{WEATHER_ICON_DIR}{tom['iconNight']}.png"))
+        reply_tomorrow.append("\n")
+        reply_tomorrow.append(f"最高温度：{tom['tempMax']}℃ 最低温度：{tom['tempMin']}℃ 湿度：{tom['humidity']}%\n")
+        reply_tomorrow.append(f"白天风力等级：{tom['windScaleDay']}级 夜间风力等级：{tom['windScaleNight']}级\n")
+    await weather.finish(reply_tomorrow)
