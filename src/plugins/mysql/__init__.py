@@ -1,20 +1,40 @@
 import asyncio
+from typing import Optional
 
 from nonebot import get_driver, export, logger
 import aiomysql
 
 from .config import Config
 
-global_config = get_driver().config
+driver = get_driver()
+global_config = driver.config
 config = Config(**global_config.dict())
 
-loop = asyncio.get_event_loop()
+pool: Optional[aiomysql.Pool] = None
+mysql_opened = False
 
-pool = aiomysql.create_pool(loop=loop, host=config.mysql_url,
-                            port=int(config.mysql_port),
-                            user=config.mysql_user,
-                            password=config.mysql_password,
-                            db=config.mysql_db)
+
+@driver.on_startup
+async def connect_to_mysql():
+    global pool, mysql_opened
+    if config.mysql_host is not None:
+        pool = await aiomysql.create_pool(host=config.mysql_host,
+                                          port=int(config.mysql_port),
+                                          user=config.mysql_user,
+                                          password=config.mysql_password,
+                                          db=config.mysql_db, charset="utf8")
+        mysql_opened = True
+        logger.info("connect to mysql")
+
+
+@driver.on_shutdown
+async def free_db():
+    global pool, mysql_opened
+    if mysql_opened:
+        pool.close()
+        await pool.wait_closed()
+        mysql_opened = False
+        logger.info("disconnect to mysql")
 
 
 # _PoolContextManager
@@ -38,8 +58,6 @@ async def op_sql(self, query, params=None):
                 logger.info("[sql_params] - %s" % (params,))
                 logger.exception(e)
                 ret = False
-    pool.close()
-    await pool.wait_closed()
     return ret
 
 
@@ -60,8 +78,6 @@ async def select_one(self, query, params=None):
                 logger.info("[sql_params] - %s" % (params,))
                 logger.exception(e)
                 ret = None
-    pool.close()
-    await pool.wait_closed()
     return ret
 
 
@@ -83,8 +99,6 @@ async def select_all(self, query, params=None):
                 logger.info("[sql_params] - %s" % params)
                 logger.exception(e)
                 ret = None
-    pool.close()
-    await pool.wait_closed()
     return ret
 
 
@@ -107,8 +121,6 @@ async def insert_many(self, query, params):
                 logger.info("[sql_params] - %s" % params)
                 logger.exception(e)
                 ret = False
-    pool.close()
-    await pool.wait_closed()
     return ret
 
 
