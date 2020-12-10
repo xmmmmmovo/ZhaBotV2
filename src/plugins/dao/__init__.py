@@ -14,13 +14,25 @@ op_sql = require("src.plugins.mysql").op_sql
 async def fetch_user_sign_status(qq, qq_group_id):
     return await select_one("select `has_signed` from `user` "
                             "where `qq` = %s and `qq_group_id` = %s",
-                            (qq, qq_group_id,))
+                            (qq, qq_group_id))
+
+
+async def fetch_user_money_status(qq, qq_group_id):
+    return await select_one("select `money` from `user` "
+                            "where `qq` = %s and `qq_group_id` = %s",
+                            (qq, qq_group_id))
+
+
+async def fetch_user_help_count_status(qq, qq_group_id):
+    return await select_one("select `help_count` from `user` "
+                            "where `qq` = %s and `qq_group_id` = %s",
+                            (qq, qq_group_id))
 
 
 async def insert_user(qq, qq_group_id, money, has_signed):
     return await op_sql("insert into `user` (`qq`, `qq_group_id`, `money`, `has_signed`) "
                         "values (%s, %s, %s, %s)",
-                        (str(qq), str(qq_group_id), money, has_signed))
+                        (qq, qq_group_id, money, has_signed))
 
 
 async def update_user(qq, qq_group_id, money, has_signed):
@@ -34,6 +46,8 @@ async def reset_user_signed(has_signed):
 
 
 export().fetch_user_sign_status = fetch_user_sign_status
+export().fetch_user_money_status = fetch_user_money_status
+export().fetch_user_help_count_status = fetch_user_help_count_status
 export().insert_user = insert_user
 export().update_user = update_user
 export().reset_user_signed = reset_user_signed

@@ -38,7 +38,7 @@ async def handle_first_receive(bot: Bot, event: Event, state: dict):
         await chat.finish("小扎好像听不懂呢~")
     else:
         smsg = Message()
-        if event.sender.get("role"):
+        if event.sub_type == "normal":
             smsg.append(MessageSegment.at(event.sender.get("user_id")))
         smsg.append(resp['data']['answer'])
         await chat.finish(smsg)
