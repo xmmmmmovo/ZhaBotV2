@@ -5,7 +5,7 @@ class Config(BaseSettings):
     # Your Config Here
     app_id = ""
     app_key = ""
-    nickname = {}
+    nickname = set()
 
     class Config:
         extra = "ignore"

@@ -1,6 +1,7 @@
 from nonebot import get_driver, on_command, on_message, logger
 from nonebot.adapters.cqhttp import Event, Bot, MessageSegment, Message
 from nonebot.permission import Permission
+from nonebot.rule import to_me
 
 from .config import Config
 from .data_source import call_tencent_api
