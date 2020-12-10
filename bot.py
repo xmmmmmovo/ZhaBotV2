@@ -26,6 +26,7 @@ nonebot.load_plugin("src.plugins.mysql")
 nonebot.load_plugin("src.plugins.permission")
 nonebot.load_plugin("src.plugins.dao")
 nonebot.load_plugin("src.plugins.economic")
+nonebot.load_plugin("src.plugins.notice_request")
 nonebot.load_plugin("src.plugins.chat")
 nonebot.load_plugin("src.plugins.echo")
 nonebot.load_plugin("src.plugins.hitokoto")
@@ -34,6 +35,7 @@ nonebot.load_plugin("src.plugins.weather")
 nonebot.load_plugin("src.plugins.schedule")
 nonebot.load_plugin("src.plugins.sign")
 nonebot.load_plugin("src.plugins.fish_power")
+nonebot.load_plugin("src.plugins.superuser")
 
 # Modify some config / config depends on loaded configs
 #
