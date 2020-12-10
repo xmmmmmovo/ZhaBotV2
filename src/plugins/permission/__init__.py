@@ -3,7 +3,8 @@ from nonebot.adapters.cqhttp import Bot, Event
 from nonebot.permission import Permission
 from .config import Config
 
-global_config = get_driver().config
+driver = get_driver()
+global_config = driver.config
 config = Config(**global_config.dict())
 
 
@@ -32,6 +33,12 @@ async def _not_anonymous_group(bot: Bot, event: Event) -> bool:
 
 
 NOT_ANONYMOUS_GROUP = Permission(_not_anonymous_group)
+
+
+@driver.on_startup
+async def init_permissions_dict():
+    pass
+
 
 export().GROUP = GROUP
 export().NOT_ANONYMOUS_GROUP = NOT_ANONYMOUS_GROUP
