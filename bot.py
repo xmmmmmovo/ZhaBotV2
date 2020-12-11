@@ -35,7 +35,7 @@ nonebot.load_plugin("src.plugins.weather")
 nonebot.load_plugin("src.plugins.schedule")
 nonebot.load_plugin("src.plugins.sign")
 nonebot.load_plugin("src.plugins.eat_what")
-nonebot.load_plugin("src.plugins.fish_power")
+# nonebot.load_plugin("src.plugins.fish_power")
 nonebot.load_plugin("src.plugins.superuser")
 
 # Modify some config / config depends on loaded configs
