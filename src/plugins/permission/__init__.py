@@ -32,7 +32,12 @@ async def _not_anonymous_group(bot: Bot, event: Event) -> bool:
             event.sub_type == "normal")
 
 
+async def _not_anonymous(bot: Bot, event: Event) -> bool:
+    return (event.type == "message" and event.sub_type == "normal")
+
+
 NOT_ANONYMOUS_GROUP = Permission(_not_anonymous_group)
+NOT_ANONYMOUS = Permission(_not_anonymous)
 
 
 @driver.on_startup
