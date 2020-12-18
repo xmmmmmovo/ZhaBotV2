@@ -18,7 +18,9 @@ get_air_message = require("src.plugins.weather").get_air_message
 
 @scheduler.scheduled_job("cron", day="*", hour="7", minute="30", id="morning_task",
                          kwargs={"morning_groups": config.morning_groups,
-                                 "key": config.weather_api_key})
+                                 "key": config.weather_api_key,
+                                 "weather_icon_dir": f"{config.base_dir}/store/weather-icon/"
+                                 })
 async def run_every_2_hour(**kwargs):
     logger.debug("开始晨间早报~")
     bots = get_bots()
@@ -35,7 +37,7 @@ async def run_every_2_hour(**kwargs):
 
             location = city_list["location"][int(groups["idx"])]
             id = location["id"]
-            msg.extend(await get_weather_message(kwargs["key"], groups["place"], id))
+            msg.extend(await get_weather_message(kwargs["key"], groups["place"], id, kwargs["weather_icon_dir"]))
             msg.extend(await get_air_message(kwargs["key"], id))
             msg.append(f"一言：{await fetch_hitokoto_str()}")
             logger.debug(msg)

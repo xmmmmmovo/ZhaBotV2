@@ -52,7 +52,8 @@ async def handle_city_list(bot: Bot, event: Event, state: dict):
     city_name = city_list[idx]["name"]
 
     reply_today = Message()
-    reply_today.extend(await get_weather_message(config.weather_api_key, city_name, city_id))
+    reply_today.extend(await get_weather_message(config.weather_api_key, city_name, city_id, WEATHER_ICON_DIR))
     reply_today.extend(await get_air_message(config.weather_api_key, city_id))
     await weather.send(reply_today)
-    await weather.finish(await get_tomorrow_weather_message(config.weather_api_key, city_name, city_id))
+    await weather.finish(
+        await get_tomorrow_weather_message(config.weather_api_key, city_name, city_id, WEATHER_ICON_DIR))
