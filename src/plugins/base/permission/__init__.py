@@ -1,7 +1,10 @@
-from nonebot import get_driver, export
+from nonebot import get_driver, export, require, logger
 from nonebot.adapters.cqhttp import Bot, Event
 from nonebot.permission import Permission
 from .config import Config
+from .data_source import fetchall_group
+
+from ujson import loads, dumps
 
 driver = get_driver()
 global_config = driver.config
@@ -42,7 +45,10 @@ NOT_ANONYMOUS = Permission(_not_anonymous)
 
 @driver.on_startup
 async def init_permissions_dict():
-    pass
+    groups = await fetchall_group()
+    perm_dict = {group["group_id"]: loads(group["plugin_status"]) for group in groups}
+    logger.debug(perm_dict)
+    require("permission").perm = perm_dict
 
 
 export().GROUP = GROUP
