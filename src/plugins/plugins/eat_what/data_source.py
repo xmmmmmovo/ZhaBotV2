@@ -1,8 +1,8 @@
 from nonebot import require
 
-select_all = require("src.plugins.mysql").select_all
-op_sql = require("src.plugins.mysql").op_sql
-select_one = require("src.plugins.mysql").select_one
+select_all = require("mysql").select_all
+op_sql = require("mysql").op_sql
+select_one = require("mysql").select_one
 
 
 async def fetch_hall_list(qq_group_id):

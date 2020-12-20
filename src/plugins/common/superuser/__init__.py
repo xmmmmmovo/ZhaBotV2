@@ -3,7 +3,7 @@ from nonebot.adapters.cqhttp import Event
 from nonebot.permission import SUPERUSER
 
 from .config import Config
-from ...common.rules import not_to_me
+from src.common.rules import not_to_me
 
 global_config = get_driver().config
 config = Config(**global_config.dict())

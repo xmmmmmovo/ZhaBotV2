@@ -7,8 +7,8 @@ config = Config(**global_config.dict())
 
 from nonebot import require
 
-select_one = require("src.plugins.mysql").select_one
-op_sql = require("src.plugins.mysql").op_sql
+select_one = require("mysql").select_one
+op_sql = require("mysql").op_sql
 
 
 async def fetch_user_sign_status(qq, qq_group_id):

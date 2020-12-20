@@ -17,12 +17,12 @@ async def connect_to_mysql():
                                           password=config.mysql_password,
                                           db=config.mysql_db, charset="utf8")
         logger.info("connect to mysql")
-        require("src.plugins.mysql").pool = pool
+        require("mysql").pool = pool
 
 
 @driver.on_shutdown
 async def free_db():
-    pool = require("src.plugins.mysql").pool
+    pool = require("mysql").pool
     pool.close()
     await pool.wait_closed()
     logger.info("disconnect to mysql")
@@ -37,7 +37,7 @@ async def op_sql(query, params=None):
     :param params:一个元祖，默认为None
     :return:如果执行过程没有crash，返回True，反之返回False
     '''
-    pool = require("src.plugins.mysql").pool
+    pool = require("mysql").pool
     async with pool.acquire() as conn:
         async with conn.cursor(aiomysql.cursors.DictCursor) as cur:
             try:
@@ -60,7 +60,7 @@ async def select_one(query, params=None):
     :param params: 一个元祖，默认为None
     :return: 如果执行未crash，并以包含dict的列表的方式返回select的结果，否则返回错误代码001
     '''
-    pool = require("src.plugins.mysql").pool
+    pool = require("mysql").pool
     async with pool.acquire() as conn:
         async with conn.cursor(aiomysql.cursors.DictCursor) as cur:
             try:
@@ -81,7 +81,7 @@ async def select_all(query, params=None):
     :param params:一个元祖，默认为None
     :return:如果执行未crash，并以包含dict的列表的方式返回select的结果，否则返回错误代码001
     '''
-    pool = require("src.plugins.mysql").pool
+    pool = require("mysql").pool
     async with pool.acquire() as conn:
         async with conn.cursor(aiomysql.cursors.DictCursor) as cur:
             try:
@@ -103,7 +103,7 @@ async def insert_many(query, params):
     :param params:一个内容为元祖的列表
     :return:如果执行过程没有crash，返回True，反之返回False
     '''
-    pool = require("src.plugins.mysql").pool
+    pool = require("mysql").pool
     async with pool.acquire() as conn:
         async with conn.cursor(aiomysql.cursors.DictCursor) as cur:
             try:

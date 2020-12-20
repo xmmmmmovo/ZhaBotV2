@@ -9,7 +9,7 @@ from .data_source import fetch_hall_list
 global_config = get_driver().config
 config = Config(**global_config.dict())
 
-NOT_ANONYMOUS_GROUP = require("src.plugins.permission").NOT_ANONYMOUS_GROUP
+NOT_ANONYMOUS_GROUP = require("permission").NOT_ANONYMOUS_GROUP
 
 today_food = on_command("eat_what", aliases={"吃什么"}, rule=not_to_me(), permission=NOT_ANONYMOUS_GROUP, priority=6)
 add_food = on_command("add_food", aliases={"加吃的"}, rule=not_to_me(), permission=NOT_ANONYMOUS_GROUP, priority=6)

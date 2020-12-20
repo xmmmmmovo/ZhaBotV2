@@ -3,16 +3,20 @@ from typing import List, Dict
 
 from nonebot import require
 
-op_sql = require("src.plugins.mysql").op_sql
-select_one = require("src.plugins.mysql").select_one
-select_all = require("src.plugins.mysql").select_all
-insert_many = require("src.plugins.mysql").insert_many
+op_sql = require("mysql").op_sql
+select_one = require("mysql").select_one
+select_all = require("mysql").select_all
+insert_many = require("mysql").insert_many
 
 
 @dataclass
 class Record:
+    tool: List
+    horses: List
+    slides: List
     user_list: Dict[str, List]
     rank: Dict[int, int]
+    is_start: bool
 
 
 start_head = """赛马(beta0.1)

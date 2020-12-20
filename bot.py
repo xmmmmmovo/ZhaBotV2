@@ -22,21 +22,11 @@ driver.register_adapter("cqhttp", CQHTTPBot)
 
 nonebot.load_plugin("nonebot_plugin_apscheduler")
 nonebot.load_plugin("nonebot_plugin_status")
-nonebot.load_plugin("src.plugins.mysql")
-nonebot.load_plugin("src.plugins.permission")
-nonebot.load_plugin("src.plugins.dao")
-nonebot.load_plugin("src.plugins.economic")
-nonebot.load_plugin("src.plugins.notice_request")
-nonebot.load_plugin("src.plugins.chat")
-nonebot.load_plugin("src.plugins.echo")
-nonebot.load_plugin("src.plugins.hitokoto")
-nonebot.load_plugin("src.plugins.horserace")
-nonebot.load_plugin("src.plugins.weather")
-nonebot.load_plugin("src.plugins.schedule")
-nonebot.load_plugin("src.plugins.sign")
-nonebot.load_plugin("src.plugins.eat_what")
-# nonebot.load_plugin("src.plugins.fish_power")
-nonebot.load_plugin("src.plugins.superuser")
+
+nonebot.load_plugins("src/plugins/base")
+nonebot.load_plugins("src/plugins/common")
+nonebot.load_plugins("src/plugins/plugins")
+nonebot.load_plugins("src/plugins/sechduler")
 
 # Modify some config / config depends on loaded configs
 #

@@ -7,9 +7,9 @@ from src.common.rules import not_to_me
 global_config = get_driver().config
 config = Config(**global_config.dict())
 
-NOT_ANONYMOUS_GROUP = require("src.plugins.permission").NOT_ANONYMOUS_GROUP
-fetch_user_money_status = require("src.plugins.dao").fetch_user_money_status
-insert_user = require("src.plugins.dao").insert_user
+NOT_ANONYMOUS_GROUP = require("permission").NOT_ANONYMOUS_GROUP
+fetch_user_money_status = require("dao").fetch_user_money_status
+insert_user = require("dao").insert_user
 
 my_money = on_command("money", aliases={"我的资产", "我的财产", "余额"}, rule=not_to_me(), permission=NOT_ANONYMOUS_GROUP,
                       priority=4)

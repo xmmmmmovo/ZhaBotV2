@@ -10,11 +10,11 @@ from src.common.rules import not_to_me
 global_config = get_driver().config
 config = Config(**global_config.dict())
 
-NOT_ANONYMOUS_GROUP = require("src.plugins.permission").NOT_ANONYMOUS_GROUP
-fetch_user_sign_status = require("src.plugins.dao").fetch_user_sign_status
-insert_user = require("src.plugins.dao").insert_user
-update_user = require("src.plugins.dao").update_user
-reset_user_signed = require("src.plugins.dao").reset_user_signed
+NOT_ANONYMOUS_GROUP = require("permission").NOT_ANONYMOUS_GROUP
+fetch_user_sign_status = require("dao").fetch_user_sign_status
+insert_user = require("dao").insert_user
+update_user = require("dao").update_user
+reset_user_signed = require("dao").reset_user_signed
 scheduler: AsyncIOScheduler = require("nonebot_plugin_apscheduler").scheduler
 
 check_in = on_command("签到", rule=not_to_me(), permission=NOT_ANONYMOUS_GROUP, priority=3)
