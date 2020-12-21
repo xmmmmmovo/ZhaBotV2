@@ -57,3 +57,7 @@ async def insert_help_count(qq, count):
 async def decrease_help_count(qq):
     return await op_sql("update house_race_player_table set help_count = help_count - 1 "
                         "where qq = %s", (qq))
+
+
+# 下面是事件相关函数
+events = {}

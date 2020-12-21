@@ -1,6 +1,8 @@
+from asyncio import sleep
+
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from nonebot import get_driver, require, on_command, on_startswith
-from dataclasses import dataclass
+from nonebot import get_driver, require, on_command, on_startswith, logger
+from re import split
 
 from nonebot.adapters.cqhttp import Bot, Event, MessageSegment
 from nonebot.permission import SUPERUSER, GROUP, GROUP_ADMIN, GROUP_OWNER
@@ -22,7 +24,7 @@ scheduler: AsyncIOScheduler = require("nonebot_plugin_apscheduler").scheduler
 
 reset_help_count_handler = on_command("resethc", rule=not_to_me(), permission=SUPERUSER, priority=7)
 stop_race = on_command("stoprace", aliases={"停止赛马"}, rule=not_to_me(), permission=GROUP_ADMIN | GROUP_OWNER, priority=7)
-bet_horse = on_startswith("押马", rule=not_to_me(), permission=NOT_ANONYMOUS_GROUP, priority=7)
+bet_horse = on_command("押马", rule=not_to_me(), permission=NOT_ANONYMOUS_GROUP, priority=7)
 start_race = on_command("startrace", aliases={"开始赛马"}, rule=not_to_me(), permission=GROUP_ADMIN | GROUP_OWNER,
                         priority=7)
 begging = on_command("begging", aliases={"救济金"}, rule=not_to_me(), permission=NOT_ANONYMOUS_GROUP, priority=7)
@@ -135,7 +137,7 @@ async def handle_first_receive(bot: Bot, event: Event, state: dict):
         await stop_race.finish("赛马还没开始呢")
 
     if record.is_start:
-        record.is_start = False
+        records.pop(event.group_id)
         await stop_race.finish("已停止赛马")
     else:
         await stop_race.finish("赛马还没开始呢")
@@ -143,4 +145,89 @@ async def handle_first_receive(bot: Bot, event: Event, state: dict):
 
 @bet_horse.handle()
 async def handle_first_receive(bot: Bot, event: Event, state: dict):
-    pass
+    record: Record = records.get(event.group_id)
+    state["record"] = record
+
+    if record is None:
+        await bet_horse.finish("还未有人准备开始赛马!")
+
+    if record.is_start:
+        await bet_horse.finish("赛马比赛已经开始，无法下注！")
+
+    msg = str(event.message).strip()
+    logger.debug(msg)
+
+    res = await fetch_user_money_status(event.user_id, event.group_id)
+    if res is None:
+        succ = await insert_user(event.user_id, event.group_id, 0, int(False))
+        if not succ:
+            await bet_horse.finish("押马失败！")
+        money = 0.0
+    else:
+        money = res["money"]
+    args = split(",|，", msg)
+    state["remain"] = money
+
+    if len(args) == 0:
+        return
+    elif len(args) == 1:
+        state["horse"] = args[0]
+    elif len(args) == 2:
+        state["horse"] = args[0]
+        state["money"] = args[1]
+
+
+@bet_horse.got("horse", prompt="请输入想要押马的编号")
+async def handle_city(bot: Bot, event: Event, state: dict):
+    try:
+        horse = int(state["horse"])
+    except:
+        await bet_horse.finish("马编号输入格式错误！请重新输入")
+
+    if horse < 1 or horse > config.house_num:
+        await bet_horse.finish("没有此编号马！请重新输入")
+
+
+@bet_horse.got("money", prompt="请输入押注钱数")
+async def handle_city(bot: Bot, event: Event, state: dict):
+    logger.debug(state["money"])
+    try:
+        money = state["remain"] \
+            if state["money"] in config.stud_list \
+            else (state["money"])
+    except:
+        await bet_horse.finish("金钱输入格式错误！请重新输入")
+    horse = int(state["horse"])
+    if money > float(state["remain"]):
+        await bet_horse.finish("没有足够的金钱！可尝试输入'。救济金'领取")
+
+    record: Record = state["record"]
+    record.user_list[event.user_id] = [horse - 1, money]
+    logger.debug(records[event.group_id])
+    await bet_horse.finish(f"成功押注{horse}号马{money}{config.money_unit}")
+
+
+@start_race.handle()
+async def handle_first_receive(bot: Bot, event: Event, state: dict):
+    # 游戏主函数
+    record: Record = records.get(event.group_id)
+    if record is None:
+        await start_race.finish("游戏还未准备，请'.赛马'来准备")
+    if record.is_start:
+        await start_race.finish("游戏已经开始！")
+
+    await game_main(record)
+
+
+async def init_slide(record: Record):
+    for k in range(len(record.slides)):
+        record.slides[k] = config.slide * config.slide_length
+
+
+async def game_main(record: Record):
+    while True:
+        await init_slide(record)
+        logger.debug(record)
+        await sleep(4)
+
+        pass
