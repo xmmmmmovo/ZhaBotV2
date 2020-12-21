@@ -54,8 +54,8 @@ async def handle_first_receive(bot: Bot, event: Event, state: dict):
             user_list={},
             tools=[],
             rank={},
-            horses=[14, 14, 14, 14, 14],
-            slides=['', '', '', '', ''],
+            horses=[config.slide_length - 1 for _ in range(config.horse_num)],
+            slides=['' for _ in range(config.horse_num)],
             is_start=False
         )
         await horse_ready.finish(start_head)
@@ -184,7 +184,7 @@ async def handle_city(bot: Bot, event: Event, state: dict):
     except:
         await bet_horse.finish("马编号输入格式错误！请重新输入")
 
-    if horse < 1 or horse > config.house_num:
+    if horse < 1 or horse > config.horse_num:
         await bet_horse.finish("没有此编号马！请重新输入")
 
 
@@ -216,6 +216,7 @@ async def handle_first_receive(bot: Bot, event: Event, state: dict):
     if record.is_start:
         await start_race.finish("游戏已经开始！")
 
+    record.is_start = True
     await game_main(record)
 
 
