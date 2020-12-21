@@ -27,8 +27,11 @@ scheduler: AsyncIOScheduler = require("nonebot_plugin_apscheduler").scheduler
 reset_help_count_handler = on_command("resethc", rule=not_to_me(), permission=SUPERUSER, priority=7)
 stop_race = on_command("stoprace", aliases={"停止赛马"}, rule=not_to_me(), permission=GROUP_ADMIN | GROUP_OWNER, priority=7)
 bet_horse = on_command("押马", rule=not_to_me(), permission=NOT_ANONYMOUS_GROUP, priority=7)
-start_race = on_command("startrace", aliases={"开始赛马"}, rule=not_to_me(), permission=GROUP_ADMIN | GROUP_OWNER,
-                        priority=7)
+chocolate = on_command("巧克力", rule=not_to_me(), permission=NOT_ANONYMOUS_GROUP, priority=7)
+hyper = on_command("兴奋剂", rule=not_to_me(), permission=NOT_ANONYMOUS_GROUP, priority=7)
+banana = on_command("香蕉皮", rule=not_to_me(), permission=NOT_ANONYMOUS_GROUP, priority=7)
+pary = on_command("祈祷", rule=not_to_me(), permission=NOT_ANONYMOUS_GROUP, priority=7)
+start_race = on_command("startrace", aliases={"开始赛马"}, rule=not_to_me(), permission=GROUP, priority=7)
 begging = on_command("begging", aliases={"救济金"}, rule=not_to_me(), permission=NOT_ANONYMOUS_GROUP, priority=7)
 shop = on_command("shop", aliases={"商品列表", "商品目录"}, rule=not_to_me(), permission=GROUP, priority=7)
 rank = on_command("rank", aliases={"排名", "排行"}, rule=not_to_me(), permission=GROUP, priority=7)
@@ -49,16 +52,17 @@ async def handle_first_receive(bot: Bot, event: Event, state: dict):
 
 @horse_ready.handle()
 async def handle_first_receive(bot: Bot, event: Event, state: dict):
-    group_id = event.group_id
-    records[group_id] = record = Record(
-        user_list={},
-        tools=[],
-        rank={},
-        horses=[config.slide_length - 1 for _ in range(config.horse_num)],
-        slides=['' for _ in range(config.horse_num)],
-        is_start=False
-    )
-    await horse_ready.finish(start_head)
+    record = records.get(event.group_id)
+    if record is None:
+        records[event.group_id] = record = Record(
+            user_list={},
+            tools=[],
+            rank={},
+            horses=[config.slide_length - 1 for _ in range(config.horse_num)],
+            slides=['' for _ in range(config.horse_num)],
+            is_start=False
+        )
+        await horse_ready.finish(start_head)
 
     if not record.is_start:
         await horse_ready.finish("本局赛马已经开始准备咯"
@@ -207,6 +211,26 @@ async def handle_city(bot: Bot, event: Event, state: dict):
     await bet_horse.finish(f"成功押注{horse}号马{money}{config.money_unit}")
 
 
+@chocolate.handle()
+async def handle_first_receive(bot: Bot, event: Event, state: dict):
+    pass
+
+
+@hyper.handle()
+async def handle_first_receive(bot: Bot, event: Event, state: dict):
+    pass
+
+
+@banana.handle()
+async def handle_first_receive(bot: Bot, event: Event, state: dict):
+    pass
+
+
+@pary.handle()
+async def handle_first_receive(bot: Bot, event: Event, state: dict):
+    pass
+
+
 @start_race.handle()
 async def handle_first_receive(bot: Bot, event: Event, state: dict):
     # 游戏主函数
@@ -215,7 +239,8 @@ async def handle_first_receive(bot: Bot, event: Event, state: dict):
         await start_race.finish("游戏还未准备，请'.赛马'来准备")
     if record.is_start:
         await start_race.finish("游戏已经开始！")
-
+    if len(record.user_list) < 3:
+        await start_race.finish('赛马比赛至少需要3人！')
     logger.debug("开始赛马~")
 
     record.is_start = True
@@ -246,12 +271,13 @@ async def final_check(record: Record):
 
 async def game_main(record: Record):
     # 游戏主体
-    while True:
+    while record.is_start and await final_check(record):
         await init_slide(record)
         logger.debug(record)
         await sleep(4)
-        event_num = randint(1, len(events))
-        await events[event_num](start_race, record)
+        event_num = randint(0, len(events))
+        if event_num != 0:
+            await events[event_num](start_race, record)
 
         # 下面是马跑路相关
         # 和检查是否小于0函数
@@ -277,10 +303,6 @@ async def game_main(record: Record):
                 in enumerate(record.slides)
             )
         )
-        # 后判断
-        if not (record.is_start and await final_check(record)):
-            break
-
 
 async def calcu_results(record: Record):
     """
