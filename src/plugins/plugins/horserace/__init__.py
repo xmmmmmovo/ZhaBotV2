@@ -1,4 +1,5 @@
 from asyncio import sleep
+from decimal import Decimal
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from nonebot import get_driver, require, on_command, on_startswith, logger
@@ -18,8 +19,8 @@ config = Config(**global_config.dict())
 NOT_ANONYMOUS_GROUP = require("permission").NOT_ANONYMOUS_GROUP
 fetch_user_sign_status = require("dao").fetch_user_sign_status
 insert_user = require("dao").insert_user
-fetch_user_money_status = require("dao").fetch_user_money_status
-increase_user_money = require("dao").increase_user_money
+fetch_user_money_status = require("economic").fetch_user_money_status
+increase_user_money = require("economic").increase_user_money
 scheduler: AsyncIOScheduler = require("nonebot_plugin_apscheduler").scheduler
 
 reset_help_count_handler = on_command("resethc", rule=not_to_me(), permission=SUPERUSER, priority=7)
@@ -48,17 +49,15 @@ async def handle_first_receive(bot: Bot, event: Event, state: dict):
 @horse_ready.handle()
 async def handle_first_receive(bot: Bot, event: Event, state: dict):
     group_id = event.group_id
-    record: Record = records.get(group_id)
-    if record is None:
-        records[group_id] = Record(
-            user_list={},
-            tools=[],
-            rank={},
-            horses=[config.slide_length - 1 for _ in range(config.horse_num)],
-            slides=['' for _ in range(config.horse_num)],
-            is_start=False
-        )
-        await horse_ready.finish(start_head)
+    records[group_id] = record = Record(
+        user_list={},
+        tools=[],
+        rank={},
+        horses=[config.slide_length - 1 for _ in range(config.horse_num)],
+        slides=['' for _ in range(config.horse_num)],
+        is_start=False
+    )
+    await horse_ready.finish(start_head)
 
     if not record.is_start:
         await horse_ready.finish("本局赛马已经开始准备咯"
@@ -137,7 +136,7 @@ async def handle_first_receive(bot: Bot, event: Event, state: dict):
         await stop_race.finish("赛马还没开始呢")
 
     if record.is_start:
-        records.pop(event.group_id)
+        record.is_start = False
         await stop_race.finish("已停止赛马")
     else:
         await stop_race.finish("赛马还没开始呢")
@@ -218,6 +217,7 @@ async def handle_first_receive(bot: Bot, event: Event, state: dict):
 
     record.is_start = True
     await game_main(record)
+    await end_game(event, record)
 
 
 async def init_slide(record: Record):
@@ -225,10 +225,94 @@ async def init_slide(record: Record):
         record.slides[k] = config.slide * config.slide_length
 
 
+async def final_check(record: Record):
+    n_rank = len(record.rank) + 1
+
+    if n_rank > 3:
+        return False
+
+    for (k, h_iter) in enumerate(record.horses):
+        if h_iter == 0:
+            h = record.rank.get(k)
+            if h is None:
+                record.rank[k] = n_rank
+
+    return True
+
+
 async def game_main(record: Record):
+    # 游戏主体
     while True:
         await init_slide(record)
         logger.debug(record)
         await sleep(4)
+        tmp_run = []
 
-        pass
+        # 下面是输出跑道状态
+        await start_race.send(
+            '\n'.join(
+                f'{k + 1} {s_iter}' for (k, s_iter)
+                in enumerate(record.slides)
+            )
+        )
+        # 后判断
+        if not (record.is_start and await final_check(record)):
+            break
+
+
+async def calcu_results(record: Record):
+    """
+    计算结果
+    :param record:
+    :return: 奖金值
+    """
+    logger.debug('开始计算')
+    every_house_cnt = [0, 0, 0, 0, 0]
+    player_num = len(record.user_list)
+    for p in record.user_list.values():
+        every_house_cnt[p[0]] += 1
+    logger.debug(every_house_cnt)
+    for qq, bet in record.user_list.items():
+        if bet[0] in record.rank.keys():
+            persons = every_house_cnt[bet[0]]
+            # 根据获胜的人数和游玩的人数来进行判断倍率
+            if persons <= (player_num - persons + 1):
+                record.user_list[qq].append(
+                    Decimal(config.odd[record.rank[bet[0]]]) * bet[1]
+                )
+            else:
+                record.user_list[qq].append(
+                    Decimal(
+                        (1 + ((config.odd[record.rank[bet[0]]] - 1)
+                              * (persons / player_num))
+                         )
+                    ) * bet[1]
+                )
+        else:
+            # 奖励变成负数
+            record.user_list[qq].append(-bet[1])
+    logger.debug(record)
+
+
+async def update_money(event: Event, record: Record):
+    for k, v in record.user_list.items():
+        await increase_user_money(event.user_id, event.group_id, v[2])
+
+
+async def end_game(event: Event, record: Record):
+    """
+    比赛结束后的结算函数
+    :param event:
+    :param record:
+    :return:
+    """
+    logger.debug('游戏结束')
+    res = '本场赛马已结束!\n'
+    res += '\n'.join(f'第{v}名：{k + 1}号马！' for k, v in record.rank.items())
+    res += '\n现在开始结算...'
+    await start_race.send(res)
+    # 下面是清算相关函数
+    await calcu_results(record)
+    await update_money(event, record)
+    records.pop(event.group_id)
+    await start_race.finish('已结算！')
