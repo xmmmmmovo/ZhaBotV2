@@ -1,4 +1,4 @@
-from typing import Dict, Tuple
+from typing import Dict, Tuple, Set
 
 from pydantic import BaseSettings
 
@@ -11,7 +11,7 @@ class Config(BaseSettings):
     help_count: int = 6
     help_money: int = 20
     slide: str = "Ξ"
-    stud_list: Tuple[str] = {"梭哈", "全压了"}
+    stud_list: Set[str] = {"梭哈", "全压了"}
     money_unit: str = "$"
 
     class Config:

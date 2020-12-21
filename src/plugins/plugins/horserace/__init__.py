@@ -1,5 +1,6 @@
 from asyncio import sleep
 from decimal import Decimal
+from random import randint
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from nonebot import get_driver, require, on_command, on_startswith, logger
@@ -10,7 +11,7 @@ from nonebot.permission import SUPERUSER, GROUP, GROUP_ADMIN, GROUP_OWNER
 
 from .config import Config
 from .data_source import reset_help_count, records, Record, start_head, select_user_order_by_money, insert_help_count, \
-    select_one_help_count_by_qq, decrease_help_count
+    select_one_help_count_by_qq, decrease_help_count, events, tools_def
 from src.common.rules import not_to_me
 
 global_config = get_driver().config
@@ -29,7 +30,7 @@ bet_horse = on_command("押马", rule=not_to_me(), permission=NOT_ANONYMOUS_GROU
 start_race = on_command("startrace", aliases={"开始赛马"}, rule=not_to_me(), permission=GROUP_ADMIN | GROUP_OWNER,
                         priority=7)
 begging = on_command("begging", aliases={"救济金"}, rule=not_to_me(), permission=NOT_ANONYMOUS_GROUP, priority=7)
-shop = on_command("shop", aliases={"商品列表"}, rule=not_to_me(), permission=GROUP, priority=7)
+shop = on_command("shop", aliases={"商品列表", "商品目录"}, rule=not_to_me(), permission=GROUP, priority=7)
 rank = on_command("rank", aliases={"排名", "排行"}, rule=not_to_me(), permission=GROUP, priority=7)
 horse_ready = on_command("horseready", aliases={"赛马", "准备赛马"}, rule=not_to_me(), permission=NOT_ANONYMOUS_GROUP,
                          priority=7)
@@ -191,13 +192,13 @@ async def handle_city(bot: Bot, event: Event, state: dict):
 async def handle_city(bot: Bot, event: Event, state: dict):
     logger.debug(state["money"])
     try:
-        money = state["remain"] \
+        money = Decimal(state["remain"]) \
             if state["money"] in config.stud_list \
-            else (state["money"])
+            else (Decimal(state["money"]))
     except:
         await bet_horse.finish("金钱输入格式错误！请重新输入")
     horse = int(state["horse"])
-    if money > float(state["remain"]):
+    if money > Decimal(state["remain"]):
         await bet_horse.finish("没有足够的金钱！可尝试输入'。救济金'领取")
 
     record: Record = state["record"]
@@ -215,8 +216,11 @@ async def handle_first_receive(bot: Bot, event: Event, state: dict):
     if record.is_start:
         await start_race.finish("游戏已经开始！")
 
+    logger.debug("开始赛马~")
+
     record.is_start = True
     await game_main(record)
+    record.is_start = False
     await end_game(event, record)
 
 
@@ -246,7 +250,25 @@ async def game_main(record: Record):
         await init_slide(record)
         logger.debug(record)
         await sleep(4)
-        tmp_run = []
+        event_num = randint(1, len(events))
+        await events[event_num](start_race, record)
+
+        # 下面是马跑路相关
+        # 和检查是否小于0函数
+        for (k, h_iter) in enumerate(record.horses):
+            record.horses[k] -= randint(0, 2)
+
+            if record.horses[k] < 0:
+                record.horses[k] = 0
+
+            if record.horses[k] > 14:
+                record.horses[k] = 14
+
+            h_iter = record.horses[k]
+
+            record.slides[k] = record.slides[k][:h_iter] + \
+                               config.horse_char + \
+                               record.slides[k][h_iter + 1:]
 
         # 下面是输出跑道状态
         await start_race.send(
@@ -316,3 +338,8 @@ async def end_game(event: Event, record: Record):
     await update_money(event, record)
     records.pop(event.group_id)
     await start_race.finish('已结算！')
+
+
+@shop.handle()
+async def handle_first_receive(bot: Bot, event: Event, state: dict):
+    await shop.finish('\n'.join(tools_def))
