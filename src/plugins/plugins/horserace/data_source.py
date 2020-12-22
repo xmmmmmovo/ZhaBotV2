@@ -38,13 +38,6 @@ async def reset_help_count(count) -> bool:
     return op_sql("update house_race_player_table set help_count=%s",
                   (count))
 
-
-async def select_user_order_by_money(group_id):
-    return await select_all("select * from user "
-                            "where qq_group_id = %s "
-                            "order by money desc", (group_id))
-
-
 async def select_one_help_count_by_qq(qq):
     return await select_one("select help_count from house_race_player_table "
                             "where qq = %s", (qq))

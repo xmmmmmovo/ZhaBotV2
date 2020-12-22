@@ -17,6 +17,8 @@ config = Config(**global_config.dict())
 class Record:
     idx: int
     bullet: List[bool]
+    k: int
+    start: bool
 
 
 record: Dict[int, Record] = {}
@@ -33,30 +35,30 @@ slot = on_command("ping", rule=not_to_me(), permission=NOT_ANONYMOUS_GROUP, prio
 @start.handle()
 async def handle_first_receive(bot: Bot, event: Event, state: dict):
     st = record.get(event.group_id)
-    if st is None:
+    if st is None or not st.start:
         lst = [True, False, False, False, False, False]
         shuffle(lst)
-        record[event.group_id] = Record(0, lst)
+        record[event.group_id] = Record(0, lst, 1, False)
         logger.debug(record[event.group_id])
         await start.finish("已开始俄罗斯轮盘~")
+    else:
+        await slot.finish("本轮已开始，请'。ping'")
 
 
 @slot.handle()
 async def handle_first_receive(bot: Bot, event: Event, state: dict):
     st: Record = record.get(event.group_id)
-    if st:
+    if st and st.start:
         if st.bullet[st.idx]:
-            record.pop(event.group_id)
-            await bot.set_group_ban(group_id=event.group_id, user_id=event.user_id, duration=60)
+            st.start = False
+            await bot.set_group_ban(group_id=event.group_id, user_id=event.user_id, duration=60 * st.k)
+            st.k += 1
             await slot.finish("pong！" + str(MessageSegment.face(169)))
         st.idx += 1
         money = await fetch_user_money_status(event.user_id, event.group_id)
         if money is None:
             await insert_user(event.user_id, event.group_id, 0, int(False))
-            money = 0
-        else:
-            money = float(money["money"])
-        await increase_user_money(event.user_id, event.group_id, money + 10)
-        await slot.finish("pa~ 金钱+10~")
+        await increase_user_money(event.user_id, event.group_id, st.k)
+        await slot.finish(f"pa~ 金钱+{st.k}~")
     else:
         await slot.finish("本轮已结束，请'。gun'重新开始")

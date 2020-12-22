@@ -10,7 +10,7 @@ from nonebot.adapters.cqhttp import Bot, Event, MessageSegment
 from nonebot.permission import SUPERUSER, GROUP, GROUP_ADMIN, GROUP_OWNER
 
 from .config import Config
-from .data_source import reset_help_count, records, Record, start_head, select_user_order_by_money, insert_help_count, \
+from .data_source import reset_help_count, records, Record, start_head, insert_help_count, \
     select_one_help_count_by_qq, decrease_help_count, events, tools_def
 from src.common.rules import not_to_me
 
@@ -31,10 +31,9 @@ chocolate = on_command("巧克力", rule=not_to_me(), permission=NOT_ANONYMOUS_G
 hyper = on_command("兴奋剂", rule=not_to_me(), permission=NOT_ANONYMOUS_GROUP, priority=7)
 banana = on_command("香蕉皮", rule=not_to_me(), permission=NOT_ANONYMOUS_GROUP, priority=7)
 pary = on_command("祈祷", rule=not_to_me(), permission=NOT_ANONYMOUS_GROUP, priority=7)
-start_race = on_command("startrace", aliases={"开始赛马"}, rule=not_to_me(), permission=GROUP, priority=7)
+start_race = on_command("startrace", aliases={"开始赛马"}, rule=not_to_me(), permission=NOT_ANONYMOUS_GROUP, priority=7)
 begging = on_command("begging", aliases={"救济金"}, rule=not_to_me(), permission=NOT_ANONYMOUS_GROUP, priority=7)
-shop = on_command("shop", aliases={"商品列表", "商品目录"}, rule=not_to_me(), permission=GROUP, priority=7)
-rank = on_command("rank", aliases={"排名", "排行"}, rule=not_to_me(), permission=GROUP, priority=7)
+shop = on_command("shop", aliases={"商品列表", "商品目录"}, rule=not_to_me(), permission=NOT_ANONYMOUS_GROUP, priority=7)
 horse_ready = on_command("horseready", aliases={"赛马", "准备赛马"}, rule=not_to_me(), permission=NOT_ANONYMOUS_GROUP,
                          priority=7)
 
@@ -67,37 +66,6 @@ async def handle_first_receive(bot: Bot, event: Event, state: dict):
     if not record.is_start:
         await horse_ready.finish("本局赛马已经开始准备咯"
                                  "请输入开始赛马进行游戏吧！")
-
-
-@rank.handle()
-async def handle_first_receive(bot: Bot, event: Event, state: dict):
-    u_list = await select_user_order_by_money(event.group_id)
-    group_list = await bot.get_group_member_list(group_id=event.group_id)
-
-    group_dict = {}
-    for u in group_list:
-        group_dict[u['user_id']] = u['card'] \
-            if u['card'] != '' else u['nickname']
-
-    ans = '江江江江！本群土豪排名公布~\n'
-    cnt = 0
-
-    user_id = event.user_id
-    for u in u_list:
-        if group_dict.get(u['qq']) is None:
-            continue
-
-        cnt += 1
-
-        if cnt > 20:
-            if event.sub_type != "anonymous" and user_id == u['qq']:
-                ans += f"你是第{cnt}名 现有财产{u['money']}$"
-                break
-            continue
-
-        ans += f"第{cnt}名: {group_dict[u['qq']]} 现有财产:{u['money']}$\n"
-
-    await rank.finish(ans)
 
 
 @begging.handle()
