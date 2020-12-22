@@ -38,8 +38,8 @@ horse_ready = on_command("horseready", aliases={"赛马", "准备赛马"}, rule=
                          priority=7)
 
 
-@scheduler.scheduled_job("cron", day="*", hour="0", minute="0", id="reset_signed_task", kwargs={})
-async def run_every_day_reset_signed(**kwargs):
+@scheduler.scheduled_job("cron", day="*", hour="0", minute="0", id="reset_help_count_task", kwargs={})
+async def run_every_day_reset_help_count(**kwargs):
     await reset_help_count(config.help_count)
 
 
