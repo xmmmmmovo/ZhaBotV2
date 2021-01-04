@@ -57,16 +57,19 @@ async def handle_first_receive(bot: Bot, event: Event, state: dict):
 async def handle_first_receive(bot: Bot, event: Event, state: dict):
     st: Record = record.get(event.group_id)
     if st and st.start:
+        if event.sender.get("role") == "admin" or event.sender.get("role") == "owner":
+            await slot.finish("请管理员不要白嫖钱~")
+        money = await fetch_user_money_status(event.user_id, event.group_id)
+        if money is None:
+            await insert_user(event.user_id, event.group_id, 0, int(False))
         if st.bullet[st.idx]:
             st.start = False
             await bot.set_group_ban(group_id=event.group_id, user_id=event.user_id, duration=60 * st.k)
+            await increase_user_money(event.user_id, event.group_id, -(st.k * 2))
             st.k += 1
             logger.debug(st)
             await slot.finish("pong！" + str(MessageSegment.face(169)))
         st.idx += 1
-        money = await fetch_user_money_status(event.user_id, event.group_id)
-        if money is None:
-            await insert_user(event.user_id, event.group_id, 0, int(False))
         await increase_user_money(event.user_id, event.group_id, st.k)
         await slot.finish(f"pa~ 金钱+{st.k}~")
     else:

@@ -170,7 +170,7 @@ async def handle_city(bot: Bot, event: Event, state: dict):
     except:
         await bet_horse.finish("金钱输入格式错误！请重新输入")
     horse = int(state["horse"])
-    if money > Decimal(state["remain"]):
+    if money > Decimal(state["remain"]) or money < Decimal(0):
         await bet_horse.finish("没有足够的金钱！可尝试输入'。救济金'领取")
 
     record: Record = state["record"]
@@ -207,8 +207,8 @@ async def handle_first_receive(bot: Bot, event: Event, state: dict):
         await start_race.finish("游戏还未准备，请'.赛马'来准备")
     if record.is_start:
         await start_race.finish("游戏已经开始！")
-    if len(record.user_list) < 3:
-        await start_race.finish('赛马比赛至少需要3人！')
+    # if len(record.user_list) < 3:
+    #     await start_race.finish('赛马比赛至少需要3人！')
     logger.debug("开始赛马~")
 
     record.is_start = True
@@ -272,6 +272,7 @@ async def game_main(record: Record):
             )
         )
 
+
 async def calcu_results(record: Record):
     """
     计算结果
@@ -307,8 +308,9 @@ async def calcu_results(record: Record):
 
 
 async def update_money(event: Event, record: Record):
+    logger.debug(record.user_list)
     for k, v in record.user_list.items():
-        await increase_user_money(event.user_id, event.group_id, v[2])
+        await increase_user_money(k, event.group_id, v[2])
 
 
 async def end_game(event: Event, record: Record):
