@@ -207,8 +207,8 @@ async def handle_first_receive(bot: Bot, event: Event, state: dict):
         await start_race.finish("游戏还未准备，请'.赛马'来准备")
     if record.is_start:
         await start_race.finish("游戏已经开始！")
-    # if len(record.user_list) < 3:
-    #     await start_race.finish('赛马比赛至少需要3人！')
+    if len(record.user_list) < 3:
+        await start_race.finish('赛马比赛至少需要3人！')
     logger.debug("开始赛马~")
 
     record.is_start = True

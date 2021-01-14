@@ -27,6 +27,8 @@ nonebot.load_plugins("src/plugins/base")
 nonebot.load_plugins("src/plugins/common")
 nonebot.load_plugins("src/plugins/plugins")
 nonebot.load_plugins("src/plugins/sechduler")
+nonebot.load_plugin("nonebot_plugin_apscheduler")
+nonebot.load_plugin("nonebot_plugin_status")
 
 # Modify some config / config depends on loaded configs
 #

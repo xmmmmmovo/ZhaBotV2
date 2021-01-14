@@ -7,7 +7,6 @@ driver = get_driver()
 global_config = driver.config
 config = Config(**global_config.dict())
 
-
 @driver.on_startup
 async def connect_to_mysql():
     if config.mysql_host is not None:
