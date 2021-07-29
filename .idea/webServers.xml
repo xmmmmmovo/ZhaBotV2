@@ -2,8 +2,8 @@
 <project version="4">
   <component name="WebServers">
     <option name="servers">
-      <webServer id="ca849859-b138-4e0f-9be1-84ee4a6cc9f2" name="tencent">
-        <fileTransfer rootFolder="/root" accessType="SFTP" host="49.232.53.181" port="57122" sshConfigId="877667f1-963e-4041-8817-31a9e6b295dc" sshConfig="root@49.232.53.181:57122 password">
+      <webServer id="69f0c386-6bb9-4b0d-a1be-41fc1c8444f3" name="pi4">
+        <fileTransfer rootFolder="/home/ubuntu" accessType="SFTP" host="192.168.0.107" port="22222" sshConfigId="e4e7e499-a23d-4ce9-b6fe-d2d6ef2d053f" sshConfig="ubuntu@192.168.0.107:22222 password">
           <advancedOptions>
             <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
           </advancedOptions>

@@ -2,15 +2,8 @@ FROM tiangolo/uvicorn-gunicorn-fastapi:python3.8
 
 RUN python3 -m pip config set global.index-url https://mirrors.aliyun.com/pypi/simple
 
-RUN echo "Asia/Shanghai" > /etc/timezone
+RUN python3 -m pip install poetry && poetry config virtualenvs.create false
 
-#RUN apt-get update && \
-#    apt-get install unixodbc-dev -y
+COPY ./pyproject.toml ./poetry.lock* /app/
 
-COPY requirements.txt /app/
-
-RUN pip install nb-cli
-RUN pip install -r requirements.txt
-
-RUN nb plugin install nonebot_plugin_apscheduler
-RUN nb plugin install nonebot_plugin_status
+RUN poetry install --no-root --no-dev
