@@ -16,19 +16,18 @@ check_in = on_command("签到", rule=not_to_me(), permission=auth, priority=96)
 
 @check_in.handle()
 async def handle_first_receive(bot: Bot, event: GroupMessageEvent, state: dict):
-    user_status = await user_collection.find_one(find_user_model(event.user_id, event.group_id))
-    sign_money = randint(config.sign_in_money_lower_limit, config.sign_in_money_upper_limit)
-
-    if user_status is None:
-        await user_collection.insert_one(new_user_model(event.user_id, event.group_id, sign_money, True))
-    else:
-        if user_status["has_signed"] == True:
-            await check_in.finish(MessageSegment.at(event.user_id) + "您今日已签过到，请勿重复签到！")
-        await user_collection.update_one(*update_user_model(event.user_id, event.group_id, sign_money, True))
-
-    await check_in.finish(MessageSegment.at(event.user_id) + f"您已签到成功！获得金钱：{sign_money}{config.money_unit}")
+    user = state["user"]
+    group = state["group"]
+    sign_money = randint(config.sign_in_money_lower_limit,
+                         config.sign_in_money_upper_limit)
+    if user["has_signed"] == True:
+        await check_in.finish(MessageSegment.at(event.user_id) + "您今日已签过到，请勿重复签到！每天5:00刷新")
+    await user_collection.update_one(*update_user_model(event.user_id, event.group_id, sign_money, True))
+    await group_collection.update_one(*update_inc_rank(event.group_id))
+    await check_in.finish(MessageSegment.at(event.user_id) + f"签到成功！今日排名第{int(group['rank'])}名，获得金钱：{sign_money}{config.money_unit}")
 
 
-@scheduler.scheduled_job("cron", day="*", hour="6", minute="30", id="reset_signed_task", kwargs={})
+@scheduler.scheduled_job("cron", day="*", hour="5", minute="0", id="reset_signed_task", kwargs={})
 async def run_every_day_reset_signed(**kwargs):
     await user_collection.update_many({}, {"$set": {"has_signed": False}})
+    await group_collection.update_many({}, {"$set": {"rank": 1}})

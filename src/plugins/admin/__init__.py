@@ -31,12 +31,12 @@ async def handle_first_receive(bot: Bot, event: GroupMessageEvent, state: dict):
     for seg in msg:  # type: MessageSegment
         seg: MessageSegment
         if seg.type == "at" and seg.data["qq"] != "all" and \
-                (await bot.get_group_member_info(group_id=event.group_id, user_id=seg.data["qq"]))["role"] not in {
-            "owner", "admin"}:
+            (await bot.get_group_member_info(group_id=event.group_id, user_id=seg.data["qq"]))["role"] not in {
+                "owner", "admin"}:
             # if seg.type == "at":
             add_people.append(seg.data["qq"])
     if len(add_people) == 0:
-        await add_admin.finish("添加成功!")
+        await add_admin.finish("没有人被添加!")
 
     if dict is None:
         res = await admin_collection.insert_one(new_admin_model(add_people, event.group_id))
@@ -58,12 +58,12 @@ async def handle_first_receive(bot: Bot, event: GroupMessageEvent, state: dict):
     for seg in msg:  # type: MessageSegment
         seg: MessageSegment
         if seg.type == "at" and seg.data["qq"] != "all" and seg.data["qq"] not in admin_list and \
-                (await bot.get_group_member_info(group_id=event.group_id, user_id=seg.data["qq"]))["role"] not in {
-            "owner", "admin"}:
+            (await bot.get_group_member_info(group_id=event.group_id, user_id=seg.data["qq"]))["role"] not in {
+                "owner", "admin"}:
             # if seg.type == "at":
             add_people.append(seg.data["qq"])
     if len(add_people) == 0:
-        await remove_admin.finish("删除成功!")
+        await remove_admin.finish("没有人被删除!")
     res = await admin_collection.update_one(*remove_admin_model(add_people, event.group_id))
     await remove_admin.finish("删除成功！")
 
@@ -139,6 +139,6 @@ async def handle_first_receive(bot: Bot, event: GroupMessageEvent, state: dict):
         index += 1
         mbuilder.append(
             f"{index}.{plugin.export.get('name'):5}({name:5}):{plugin.export.get('description'):10}"
-            f"{'️🔵' if (res is not None and res.get(name)) else '⚫':^1}\n")
+            f"{'️🔵' if (res is not None and bool(res.get(name))) else '⚫':^1}\n")
     mbuilder.append("注：.enable .disable开关插件")
     await plugin_status.finish(mbuilder)

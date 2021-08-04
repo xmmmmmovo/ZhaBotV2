@@ -4,7 +4,7 @@
 from loguru import logger
 import nonebot
 from nonebot.adapters.cqhttp import Bot as CQHTTPBot
-from nonebot.adapters.cqhttp import Bot, Event, Message, MessageSegment
+
 
 # You can pass some keyword args config to init function
 nonebot.init()

@@ -1,3 +1,4 @@
+from typing import Iterable
 from nonebot import Bot
 from nonebot.adapters.cqhttp import Event
 from nonebot.rule import Rule
@@ -9,3 +10,10 @@ def not_to_me() -> Rule:
         return isinstance(event, GroupMessageEvent) and event.sub_type == "normal"
 
     return Rule(_not_to_me)
+
+
+def allow_all() -> Rule:
+    async def _allow_all(bot: Bot, event: Event, state: dict) -> bool:
+        return True
+
+    return Rule(_allow_all)

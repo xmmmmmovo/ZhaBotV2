@@ -15,3 +15,5 @@ db: AgnosticDatabase = client.bot
 user_collection: AgnosticCollection = db.get_collection("user")
 plugin_collection: AgnosticCollection = db.get_collection("plugin")
 admin_collection: AgnosticCollection = db.get_collection("admin")
+shot_collection: AgnosticCollection = db.get_collection("shot")
+group_collection: AgnosticCollection = db.get_collection("group")

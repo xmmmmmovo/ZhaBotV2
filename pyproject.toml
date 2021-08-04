@@ -15,7 +15,7 @@ nonebot-test = "^0.1.0"
 
 [nonebot.plugins]
 plugins = ["nonebot_plugin_apscheduler"]
-plugin_dirs = ["src/plugins"]
+plugin_dirs = ["src/plugins", "src/middleware"]
 
 [build-system]
 requires = ["poetry>=0.12"]

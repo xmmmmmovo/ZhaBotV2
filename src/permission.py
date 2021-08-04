@@ -13,7 +13,7 @@ def Admin() -> Permission:
         group = await admin_collection.find_one({"group_id": event.group_id})
         if group is None:
             return False
-        if event.sender.user_id in group["qqlist"]:
+        if str(event.sender.user_id) in group["qqlist"]:
             return True
         return False
 
@@ -27,7 +27,7 @@ def Auth(plugin: str, perm: Permission = Permission()) -> Permission:
         group_id = event.group_id
 
         plugins = await plugin_collection.find_one(find_plugin_model(group_id))
-        if plugins is not None and plugins.get(plugin):
+        if plugins is not None and bool(plugins.get(plugin)):
             return await perm.__call__(bot, event)
         return False
 
