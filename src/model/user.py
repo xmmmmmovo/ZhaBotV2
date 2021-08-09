@@ -1,6 +1,7 @@
 import money as money
 from src.db import user_collection
 
+
 def new_user_model(qq: int, group_id: int, money, has_signed):
     return {
         "qq": int(qq),
@@ -28,13 +29,14 @@ def update_user_model(qq, group_id, money: float, has_signed: bool):
         }
     }
 
-async def update_user_money_model(qq, group_id, money):
+
+async def update_user_money_model(qq, group_id, money: float):
     return await user_collection.update_one({
         "qq": int(qq),
         "group_id": int(group_id)
     }, {
         "$inc": {
-            "money": float(money)
+            "money": round(float(money), 2)
         }
     })
 

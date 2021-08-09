@@ -26,7 +26,7 @@ def Auth(plugin: str, perm: Permission = Permission()) -> Permission:
             return await perm.__call__(bot, event)
         group_id = event.group_id
 
-        plugins = await plugin_collection.find_one(find_plugin_model(group_id))
+        plugins = await find_plugin_model(group_id)
         if plugins is not None and bool(plugins.get(plugin)):
             return await perm.__call__(bot, event)
         return False

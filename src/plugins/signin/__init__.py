@@ -12,6 +12,7 @@ export().description = "签到功能"
 scheduler: AsyncIOScheduler = require("nonebot_plugin_apscheduler").scheduler
 
 check_in = on_command("签到", rule=not_to_me(), permission=auth, priority=96)
+test = on_command("test", rule=not_to_me(), permission=auth, priority=96)
 
 
 @check_in.handle()

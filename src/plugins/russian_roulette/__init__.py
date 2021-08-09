@@ -29,9 +29,7 @@ async def handle_first_receive(bot: Bot, event: GroupMessageEvent, state: dict):
     record = await find_or_insert_shot_model(event.group_id)
     logger.debug(record)
     if record["has_started"] == False:
-        seed()
         k = randint(0, 5)
-        logger.debug(k)
         await init_shot_game(event.group_id, k)
         await start.finish(f"已开始俄罗斯轮盘，规则：\n"
                            "每位人员都可以.ping/。ping，如果被pong了将会损失10%(管理员和群主是30%)的资产(少于30的会直接清0但是不会禁言)并分配给前面所有参与的人员\n"
@@ -61,6 +59,7 @@ async def handle_first_receive(bot: Bot, event: GroupMessageEvent, state: dict):
                 money = float(user["money"]) * 0.1
                 bot.set_group_ban(group_id=event.group_id,
                                   user_id=event.user_id, duration=60 * int(state['group']['ban_time']))
+
         await update_user_money_model(event.user_id, event.group_id, -money)
         qqs = record["qqs"]
         if len(qqs) != 0:
@@ -81,6 +80,6 @@ async def handle_first_receive(bot: Bot, event: GroupMessageEvent, state: dict):
         await shot.finish("pa~")
 
 
-@scheduler.scheduled_job("cron", day="*", hour="0", minute="0", id="reset_signed_task", kwargs={})
-async def run_every_day_reset_signed(**kwargs):
+@scheduler.scheduled_job("cron", day="*", hour="0", minute="0", id="reset_ban_time_task", kwargs={})
+async def run_every_day_reset_ban_time(**kwargs):
     await reset_ban_time()

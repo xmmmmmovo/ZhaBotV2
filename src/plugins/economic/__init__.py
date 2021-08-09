@@ -61,6 +61,7 @@ async def handle_first_receive(bot: Bot, event: GroupMessageEvent, state: dict):
 async def handle_first_receive(bot: Bot, event: GroupMessageEvent, state: dict):
     ats = message_to_at_list(event.get_message())
     needs = message_to_args(event.get_message())
+    logger.debug(needs)
     idx = 0
     for (at, need) in zip(ats, needs):
         fneed = float(need)
@@ -115,8 +116,6 @@ async def handle_first_receive(bot: Bot, event: GroupMessageEvent, state: dict):
 
     user_id = event.user_id
     for u in await u_list.to_list(None):
-        logger.debug(int(u['qq']))
-        logger.debug(group_dict.get(int(u['qq'])))
         if group_dict.get(int(u['qq'])) is None:
             continue
 

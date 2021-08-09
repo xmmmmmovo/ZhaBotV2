@@ -88,8 +88,7 @@ async def handle_plugin(bot: Bot, event: GroupMessageEvent, state: dict):
         names = plugins_names
     else:
         names = filter(lambda name: name in plugins_names, names)
-    res = await plugin_collection.update_one(
-        *update_plugin_model(event.group_id, names, True), upsert=True)
+    res = await update_plugin_model(event.group_id, names, True)
     await enable.finish("开启成功！")
 
 
@@ -108,8 +107,7 @@ async def handle_plugin(bot: Bot, event: GroupMessageEvent, state: dict):
         names = plugins_names
     else:
         names = filter(lambda name: name in plugins_names, names)
-    res = await plugin_collection.update_one(
-        *update_plugin_model(event.group_id, names, False), upsert=True)
+    res = await update_plugin_model(event.group_id, names, False)
     await disable.finish("关闭成功！")
 
 
@@ -130,7 +128,7 @@ async def handle_first_receive(bot: Bot, event: GroupMessageEvent, state: dict):
 
 @plugin_status.handle()
 async def handle_first_receive(bot: Bot, event: GroupMessageEvent, state: dict):
-    res = await plugin_collection.find_one(find_plugin_model(event.group_id))
+    res = await find_plugin_model(event.group_id)
     mbuilder = Message("插件开启情况如下：\n")
     index = 0
     for (name, plugin) in plugins.items():
