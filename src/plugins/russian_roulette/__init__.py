@@ -57,8 +57,8 @@ async def handle_first_receive(bot: Bot, event: GroupMessageEvent, state: dict):
                 money = float(user["money"]) * 0.3
             else:
                 money = float(user["money"]) * 0.1
-                bot.set_group_ban(group_id=event.group_id,
-                                  user_id=event.user_id, duration=60 * int(state['group']['ban_time']))
+                await bot.set_group_ban(group_id=event.group_id,
+                                        user_id=event.user_id, duration=60 * int(state['group']['ban_time']))
 
         await update_user_money_model(event.user_id, event.group_id, -money)
         qqs = record["qqs"]

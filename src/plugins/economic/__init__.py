@@ -33,7 +33,7 @@ addmoney = on_command("addmoney",
 async def handle_first_receive(bot: Bot, event: GroupMessageEvent, state: dict):
     user = state["user"]
     money = user.get("money")
-    await mymoney.finish(MessageSegment.at(event.user_id) + f"您当前的资产为：{money}{config.money_unit}")
+    await mymoney.finish(MessageSegment.at(event.user_id) + f"您当前的资产为：{round(money, 2)}{config.money_unit}")
 
 
 @pay.handle()
@@ -90,10 +90,10 @@ async def handle_first_receive(bot: Bot, event: GroupMessageEvent, state: dict):
     #         await user_collection.insert_one(new_user_model(at, event.group_id, need, False))
     #     else:
     #         await user_collection.update_one(*update_user_money_model(at, event.group_id, fneed))
-        
+
     #     def return_money_callback(bet:float, qq:int):
     #         pass
-        
+
     #     scheduler.add_job(return_money_callback, "date", run_date=datetime.now() + timedelta(days=3))
     #     user["money"] -= fneed
     # await pay.finish("借贷成功！")
@@ -123,7 +123,7 @@ async def handle_first_receive(bot: Bot, event: GroupMessageEvent, state: dict):
 
         if cnt > 20:
             if event.sub_type != "anonymous" and user_id == u['qq']:
-                ans += f"你是第{cnt}名 现有财产{u['money']}$"
+                ans += f"你是第{cnt}名 现有财产{round(u['money'],2)}$"
                 break
             continue
 
