@@ -1,33 +1,6 @@
-from dataclasses import dataclass
 from random import choice, randint, sample
-from typing import List, Dict
-
-@dataclass
-class Record:
-    tools: List
-    horses: List
-    slides: List
-    user_list: Dict[str, List]
-    rank: Dict[int, int]
-    is_start: bool
-
-
-records: Dict[str, Record] = {}
-
-start_head = """赛马(beta0.1)
-押这只马人数<=押其他马人数+1时：
-奖励=赔率x下注金额
-押这只马人数>押其他马人数+1时：
-奖励=[100%+(赔率-100%)x（押其它马的人数/押马总人数）]x下注金额
-输入 押马 x,y（x为数字，y为押金，如：押马 1,2）来选择您觉得会胜出的马，一人只能押一只
-输入 开始赛马 开始比赛
-注意：开始比赛后不能再选马
-注意：只有前三只到达终点的马会根据名次获得获胜奖励（排名并列的情况下可能超过三只）
-"""
 
 # 下面都是事件相关函数
-
-
 def get_avaliable_houses(houses):
     a_list = []
     for (k, v) in enumerate(houses):
@@ -36,7 +9,7 @@ def get_avaliable_houses(houses):
     return a_list
 
 
-async def event1(session, record: Record):
+async def event1(session):
     """
     猎马人相关事件
     :param session:
@@ -53,7 +26,7 @@ async def event1(session, record: Record):
     record.horses[suffer_house] += 2
 
 
-async def event2(session, record: Record):
+async def event2(session):
     """
     母马经过相关事件
     :param session:
@@ -66,7 +39,7 @@ async def event2(session, record: Record):
             record.horses[k] -= 1
 
 
-async def event3(session, record: Record):
+async def event3(session):
     """
     滑倒/溜冰相关事件
     :param session:
@@ -84,7 +57,7 @@ async def event3(session, record: Record):
             record.horses[k] += 2
 
 
-async def event4(session, record: Record):
+async def event4(session):
     """
     放屁加速事件
     :param session:
@@ -101,7 +74,7 @@ async def event4(session, record: Record):
     record.horses[suffer_house] -= 1
 
 
-async def event5(session, record: Record):
+async def event5(session):
     """
     交换跑道相关事件
     :param session:
@@ -129,19 +102,19 @@ events = {
 
 
 # 下面都是物品函数
-async def chocolate(house_num: int, record: Record):
+async def chocolate(house_num: int):
     pass
 
 
-async def hyper(house_num: int, record: Record):
+async def hyper(house_num: int):
     pass
 
 
-async def banana(house_num: int, record: Record):
+async def banana(house_num: int):
     pass
 
 
-async def pary(house_num: int, record: Record):
+async def pary(house_num: int):
     pass
 
 

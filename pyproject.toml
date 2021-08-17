@@ -2,13 +2,19 @@
 name = "bot"
 version = "0.1.0"
 description = "bot"
-authors = []
+authors = ["xmmmmmovo"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.7"
-nonebot2 = "^2.0.0.a1"
-nb-cli = "^0.1.0"
+nonebot2 = "^2.0.0.a14"
+nb-cli = "0.4.2"
+nonebot-adapter-cqhttp = "^2.0.0.a14"
+nonebot-plugin-apscheduler = "0.1.2"
+motor = "2.5.0"
+aiocache = "0.11.1"
+psutil = "5.8.0"
+cn2an = "0.5.11"
 
 [tool.poetry.dev-dependencies]
 nonebot-test = "^0.1.0"

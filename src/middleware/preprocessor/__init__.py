@@ -1,3 +1,6 @@
+"""
+信息添加中间件
+"""
 from nonebot.adapters.cqhttp import Bot, Event
 from nonebot.adapters.cqhttp.event import GroupMessageEvent
 from nonebot.message import run_preprocessor

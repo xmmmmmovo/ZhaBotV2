@@ -20,15 +20,37 @@ def Admin() -> Permission:
     return Permission(__permission)
 
 
-def Auth(plugin: str, perm: Permission = Permission()) -> Permission:
-    async def __permission(bot: Bot, event: Event) -> bool:
-        if not isinstance(event, GroupMessageEvent):
-            return await perm.__call__(bot, event)
-        group_id = event.group_id
+class Auth():
+    plugin_name = ""
 
-        plugins = await find_plugin_model(group_id)
-        if plugins is not None and bool(plugins.get(plugin)):
-            return await perm.__call__(bot, event)
-        return False
+    def __init__(self, plugin_name) -> None:
+        self.plugin_name = plugin_name
+        return
 
-    return Permission(__permission)
+    def auth_permission(self, perm: Permission = Permission()) -> Permission:
+        plugin_name = self.plugin_name
+
+        async def __permission(bot: Bot, event: Event) -> bool:
+            if not isinstance(event, GroupMessageEvent):
+                return await perm(bot, event)
+            group_id = event.group_id
+
+            plugins = await find_plugin_model(group_id)
+            if plugins is not None and bool(plugins.get(plugin_name)):
+                return await perm(bot, event)
+            return False
+        return Permission(__permission)
+
+    def admin_auth_permission(self, perm: Permission = Admin()):
+        plugin_name = self.plugin_name
+
+        async def __permission(bot: Bot, event: Event) -> bool:
+            if not isinstance(event, GroupMessageEvent):
+                return await perm(bot, event)
+            group_id = event.group_id
+
+            plugins = await find_plugin_model(group_id)
+            if plugins is not None and bool(plugins.get(plugin_name)):
+                return await perm(bot, event)
+            return False
+        return Permission(__permission)

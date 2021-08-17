@@ -10,20 +10,21 @@ global_config = get_driver().config
 config = Config(**global_config.dict())
 
 auth = Auth("economic")
+simple = auth.auth_permission()
 export().name = "经济"
 export().description = "查询金钱和转账"
 
 scheduler: AsyncIOScheduler = require("nonebot_plugin_apscheduler").scheduler
 
-mymoney = on_command("money", aliases={"我的资产", "我的财产", "余额"}, rule=not_to_me(), permission=auth,
+mymoney = on_command("money", aliases={"我的资产", "我的财产", "余额"}, rule=not_to_me(), permission=simple,
                      priority=97)
 rank = on_command("rank", aliases={"排名", "排行"},
-                  rule=not_to_me(), permission=auth, priority=97)
+                  rule=not_to_me(), permission=simple, priority=97)
 
 pay = on_command("pay", aliases={"转账"},
-                 rule=not_to_me(), permission=auth, priority=97)
+                 rule=not_to_me(), permission=simple, priority=97)
 
-borrow = on_command("borrow", rule=not_to_me(), permission=auth, priority=97)
+borrow = on_command("borrow", rule=not_to_me(), permission=simple, priority=97)
 
 addmoney = on_command("addmoney",
                       rule=not_to_me(), permission=SUPERUSER, priority=97)

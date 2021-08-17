@@ -10,16 +10,11 @@ global_config = get_driver().config
 config = Config(**global_config.dict())
 
 auth = Auth("chat")
+simple = auth.auth_permission()
 export().name = "聊天"
 export().description = "聊天捏"
 
-chat = on_message(rule=to_me(), permission=auth, priority=100)
-train = on_message(rule=allow_all(), permission=Permission(), priority=999)
-
-
-@train.handle()
-async def handle_first_receive(bot: Bot, event: Event, state: dict):
-    await train.finish()
+chat = on_message(rule=to_me(), permission=simple, priority=100)
 
 
 @chat.handle()

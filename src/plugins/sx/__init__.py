@@ -9,10 +9,11 @@ global_config = get_driver().config
 config = Config(**global_config.dict())
 
 auth = Auth("sx")
+simple = auth.auth_permission()
 export().name = "缩写"
 export().description = "能不能好好说话"
 
-sx = on_command("sx", rule=not_to_me(), permission=auth, priority=95)
+sx = on_command("sx", rule=not_to_me(), permission=simple, priority=95)
 
 
 @sx.handle()

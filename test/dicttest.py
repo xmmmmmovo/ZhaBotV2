@@ -6,3 +6,5 @@ a = {
 
 for (index, value) in enumerate(a.values()):
     print(index, value)
+
+print([0] * 5)

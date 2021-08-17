@@ -8,10 +8,11 @@ global_config = get_driver().config
 config = Config(**global_config.dict())
 
 auth = Auth("weather")
+simple = auth.auth_permission()
 export().name = "天气"
 export().description = "用来查天气的"
 
-weather = on_command("天气", rule=not_to_me(), permission=auth, priority=98)
+weather = on_command("天气", rule=not_to_me(), permission=simple, priority=98)
 
 WEATHER_ICON_DIR = f"{config.base_dir}/data/weather-icon/"
 
