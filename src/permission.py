@@ -20,7 +20,7 @@ def Admin() -> Permission:
     return Permission(__permission)
 
 
-class Auth():
+class Auth:
     plugin_name = ""
 
     def __init__(self, plugin_name) -> None:

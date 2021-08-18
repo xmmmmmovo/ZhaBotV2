@@ -8,3 +8,6 @@ for (index, value) in enumerate(a.values()):
     print(index, value)
 
 print([0] * 5)
+
+print("1" * -2)
+print("1" * 1)

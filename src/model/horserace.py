@@ -24,10 +24,10 @@ async def update_bet_money(group_id: int, qq: int, money: float, horse: int):
         "group_id": group_id
     }, {
         "$set": {
-            f"user.{qq}": {
-                "money": round(money, 2),
-                "horse": horse
-            }
+            f"user.{qq}": [
+                horse - 1,
+                round(money, 2)
+            ]
         }
     })
 
@@ -42,7 +42,25 @@ async def update_game_status(group_id: int):
     })
 
 
-async def update_in_game_vars(group_id: int):
+async def update_in_game_vars(group_id: int, horses: List[int]):
+    return await horserace_collection.find_one_and_update({
+        "group_id": group_id
+    }, {
+        "$set": {
+            "horses": horses
+        }
+    }, returnNewDocument=True)
+
+
+async def update_rank_status(group_id: int, horse: int, rank: int):
     return await horserace_collection.update_one({
         "group_id": group_id
+    }, {
+        "$set": {
+            f"rank.{horse}": rank
+        }
     })
+
+
+async def remove_horserace_model(group_id: int):
+    await horserace_collection.delete_one({"group_id": group_id})

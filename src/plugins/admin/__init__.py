@@ -31,8 +31,8 @@ async def handle_first_receive(bot: Bot, event: GroupMessageEvent, state: dict):
     for seg in msg:  # type: MessageSegment
         seg: MessageSegment
         if seg.type == "at" and seg.data["qq"] != "all" and \
-            (await bot.get_group_member_info(group_id=event.group_id, user_id=seg.data["qq"]))["role"] not in {
-                "owner", "admin"}:
+                (await bot.get_group_member_info(group_id=event.group_id, user_id=seg.data["qq"]))["role"] not in {
+            "owner", "admin"}:
             # if seg.type == "at":
             add_people.append(seg.data["qq"])
     if len(add_people) == 0:
@@ -58,8 +58,8 @@ async def handle_first_receive(bot: Bot, event: GroupMessageEvent, state: dict):
     for seg in msg:  # type: MessageSegment
         seg: MessageSegment
         if seg.type == "at" and seg.data["qq"] != "all" and seg.data["qq"] not in admin_list and \
-            (await bot.get_group_member_info(group_id=event.group_id, user_id=seg.data["qq"]))["role"] not in {
-                "owner", "admin"}:
+                (await bot.get_group_member_info(group_id=event.group_id, user_id=seg.data["qq"]))["role"] not in {
+            "owner", "admin"}:
             # if seg.type == "at":
             add_people.append(seg.data["qq"])
     if len(add_people) == 0:
@@ -117,8 +117,9 @@ async def handle_first_receive(bot: Bot, event: GroupMessageEvent, state: dict):
     mbuilder = Message("管理列表如下：\n")
     members = await bot.get_group_member_list(group_id=event.group_id)
     filter_members = filter(
-        lambda member: (member["role"] in {"admin", "owner"}) or (False if res is None else member["user_id"] in res[
-            "qqlist"]),
+        lambda member: (member["role"] in {"admin", "owner"}) or (
+            False if res is None else str(member["user_id"]) in res[
+                "qqlist"]),
         members)
     for (index, member) in enumerate(filter_members):
         mbuilder.append(f"{index + 1}: {member['nickname']}\n")
