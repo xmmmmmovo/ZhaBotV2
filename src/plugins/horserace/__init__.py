@@ -127,7 +127,7 @@ async def handle_first_receive(bot: Bot, event: GroupMessageEvent, state: dict):
         if pos > config.slide_length - 1:
             pos = config.slide_length - 1
         horses[idx] = pos
-
+        logger.debug(pos)
         if pos == 0:
             return config.horse_char + (config.slide * (config.slide_length - 1))
         if status == -1 or (status == 1 and idx not in suf_list):
@@ -151,8 +151,10 @@ async def handle_first_receive(bot: Bot, event: GroupMessageEvent, state: dict):
 
         event_num = randint(0, len(events))
         if event_num != 0:
-            horses, status, suf_list = await events[event_num](start_race, horses)
-        await start_race.send("\n".join(f"{i + 1} {update(i, pos)}" for (i, pos) in enumerate(horses)))
+            logger.debug(event_num)
+            logger.debug(horses)
+            status, suf_list = await events[event_num](start_race, horses)
+        await start_race.send("\n".join(f"{i + 1} {logger.debug(update(i, pos))}" for (i, pos) in enumerate(horses)))
         record = await update_in_game_vars(event.group_id, horses)
         logger.debug(record)
         await sleep(4)

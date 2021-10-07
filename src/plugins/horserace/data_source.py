@@ -24,10 +24,10 @@ async def event1(matcher: Matcher, horses: List[int]):
         suffer_house = choice(
             list(filter(lambda x: x != -1, map(lambda x: -1 if x[1] <= 0 else x[0], enumerate(horses)))))
     except:
-        return horses, -1, None
+        return -1, None
     await matcher.send(f'猎马人突然出现！{suffer_house + 1}被迫与其周旋！')
     horses[suffer_house] += 2
-    return horses, 1, {suffer_house}
+    return 1, {suffer_house}
 
 
 async def event2(matcher: Matcher, horses: List[int]):
@@ -38,7 +38,7 @@ async def event2(matcher: Matcher, horses: List[int]):
     for (k, h_iter) in enumerate(horses):
         if horses[k] != 0:
             horses[k] -= 1
-    return horses, 1, {}
+    return 2, {}
 
 
 async def event3(matcher: Matcher, horses: List[int]):
@@ -48,7 +48,7 @@ async def event3(matcher: Matcher, horses: List[int]):
     try:
         suffer_house = list(filter(lambda x: x != -1, map(lambda x: -1 if x[1] <= 0 else x[0], enumerate(horses))))
     except:
-        return horses, -1, None
+        return -1, None
 
     await matcher.send('天气寒冷！所有马均有机会滑倒！')
     sl = []
@@ -57,7 +57,7 @@ async def event3(matcher: Matcher, horses: List[int]):
             await matcher.send(f'{k + 1}号马滑倒了!')
             horses[k] += 2
             sl.append(k)
-    return horses, 1, set(sl)
+    return 1, set(sl)
 
 
 async def event4(matcher: Matcher, horses: List[int]):
@@ -68,10 +68,10 @@ async def event4(matcher: Matcher, horses: List[int]):
         suffer_house = choice(
             list(filter(lambda x: x != -1, map(lambda x: -1 if x[1] <= 0 else x[0], enumerate(horses)))))
     except:
-        return horses, -1, None
+        return -1, None
     await matcher.send(f'{suffer_house + 1}号马突然使用了神秘的加速技巧！')
     horses[suffer_house] -= 1
-    return horses, 1, {suffer_house}
+    return 1, {suffer_house}
 
 
 async def event5(matcher: Matcher, horses: List[int]):
@@ -82,14 +82,15 @@ async def event5(matcher: Matcher, horses: List[int]):
         suffer_house = sample(
             list(filter(lambda x: x != -1, map(lambda x: -1 if x[1] <= 0 else x[0], enumerate(horses)))), 2)
     except:
-        return horses, -1, None
+        return -1, None
     await matcher.send(f'芜湖~{suffer_house[0] + 1}号马与{suffer_house[1] + 1}号马突然交换了跑道！')
     from nonebot.log import logger
     logger.debug(horses)
+    logger.debug(suffer_house)
     horses[suffer_house[0]], horses[suffer_house[1]] = \
         horses[suffer_house[1]], horses[suffer_house[0]]
     logger.debug(horses)
-    return horses, 1, set(suffer_house)
+    return 1, set(suffer_house)
 
 
 # 事件集合 相当于高效switch
