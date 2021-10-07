@@ -16,7 +16,8 @@ auth = init_plugin(export(), "horserace", "赛马", "赛马比赛")
 simple = auth.auth_permission()
 admin = auth.admin_auth_permission()
 
-bet_horse = on_command("押马", aliases={"压马"}, rule=not_to_me(), permission=simple, priority=93)
+bet_horse = on_command(
+    "押马", aliases={"压马"}, rule=not_to_me(), permission=simple, priority=93)
 chocolate = on_command("巧克力", rule=not_to_me(), permission=simple, priority=93)
 hyper = on_command("兴奋剂", rule=not_to_me(), permission=simple, priority=93)
 banana = on_command("香蕉皮", rule=not_to_me(), permission=simple, priority=93)
@@ -53,7 +54,6 @@ async def handle_first_receive(bot: Bot, event: GroupMessageEvent, state: dict):
 
     msg = event.get_plaintext().strip()
     args = split("[,，]", msg)
-    logger.debug(args)
 
     if len(args) == 0:
         return
@@ -103,7 +103,7 @@ async def final_check(record: dict, group_id: int):
 
     for (k, h) in enumerate(horses):
         if h == 0:
-            tmp = rank.get(k)
+            tmp = rank.get(str(k))
             if tmp is None:
                 await update_rank_status(group_id, k, n_rank)
 
@@ -127,36 +127,34 @@ async def handle_first_receive(bot: Bot, event: GroupMessageEvent, state: dict):
         if pos > config.slide_length - 1:
             pos = config.slide_length - 1
         horses[idx] = pos
-        logger.debug(pos)
         if pos == 0:
             return config.horse_char + (config.slide * (config.slide_length - 1))
         if status == -1 or (status == 1 and idx not in suf_list):
             return config.slide * pos + config.horse_char + config.slide * (config.slide_length - 1 - pos)
         if event_num == 1:
             return config.slide * (pos - 2) + "👨‍🎤🔪" + config.horse_char + config.slide * (
-                    config.slide_length - 1 - pos)
+                config.slide_length - 1 - pos)
         if event_num == 2:
             return config.slide * (pos - 2) + "🐴🌹" + config.horse_char + config.slide * (
-                    config.slide_length - 1 - pos)
+                config.slide_length - 1 - pos)
         if event_num == 3:
             return config.slide * (pos - 2) + "🧊" + config.slide + config.horse_char + config.slide * (
-                    config.slide_length - 1 - pos)
+                config.slide_length - 1 - pos)
         if event_num == 4:
             return config.slide * pos + config.horse_char + "💨" + config.slide * (
-                    config.slide_length - 2 - pos)
+                config.slide_length - 2 - pos)
         return config.slide * pos + config.horse_char + config.slide * (config.slide_length - 1 - pos)
 
     while await final_check(record, event.group_id):
         horses: List[int] = record["horses"]
 
         event_num = randint(0, len(events))
+        status = -1
         if event_num != 0:
-            logger.debug(event_num)
-            logger.debug(horses)
+
             status, suf_list = await events[event_num](start_race, horses)
-        await start_race.send("\n".join(f"{i + 1} {logger.debug(update(i, pos))}" for (i, pos) in enumerate(horses)))
+        await start_race.send("\n".join(f"{i + 1} {update(i, pos)}" for (i, pos) in enumerate(horses)))
         record = await update_in_game_vars(event.group_id, horses)
-        logger.debug(record)
         await sleep(4)
     record = await find_race_model(event.group_id)
     rank = record["rank"]
@@ -166,22 +164,23 @@ async def handle_first_receive(bot: Bot, event: GroupMessageEvent, state: dict):
     res += '\n现在开始结算...'
     await start_race.send(res)
 
+    # 开始结算
     every_house_cnt = [0] * config.horse_num
     player_num = len(user_list)
     for p in user_list.values():
         every_house_cnt[p[0]] += 1
     for qq, bet in user_list.items():
-        if bet[0] in rank.keys():
+        if str(bet[0]) in rank.keys():
             persons = every_house_cnt[bet[0]]
             # 根据获胜的人数和游玩的人数来进行判断倍率
             if persons <= (player_num - persons + 1):
                 user_list[qq].append(
-                    rfloat(config.odd[record.rank[bet[0]]]) * bet[1]
+                    rfloat(config.odd[rank[str(bet[0])]]) * bet[1]
                 )
             else:
                 user_list[qq].append(
                     rfloat(
-                        (1 + ((config.odd[record.rank[bet[0]]] - 1)
+                        (1 + ((config.odd[rank[str(bet[0])]] - 1)
                               * (persons / player_num))
                          )
                     ) * bet[1]
@@ -189,7 +188,6 @@ async def handle_first_receive(bot: Bot, event: GroupMessageEvent, state: dict):
         else:
             # 奖励变成负数
             user_list[qq].append(-bet[1])
-    logger.debug(user_list)
     for (qq, v) in user_list.items():
         await update_user_money_model(qq, event.group_id, v[2])
     await remove_horserace_model(event.group_id)

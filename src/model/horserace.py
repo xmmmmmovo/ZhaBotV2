@@ -1,7 +1,6 @@
 from src.db import horserace_collection
-from typing import Dict, List
-
-
+from typing import Any, Dict, List
+from pymongo import ReturnDocument
 async def find_race_model(group_id: int):
     return await horserace_collection.find_one({"group_id": int(group_id)})
 
@@ -24,7 +23,7 @@ async def update_bet_money(group_id: int, qq: int, money: float, horse: int):
         "group_id": group_id
     }, {
         "$set": {
-            f"user.{qq}": [
+            f"user_list.{qq}": [
                 horse - 1,
                 round(money, 2)
             ]
@@ -49,7 +48,7 @@ async def update_in_game_vars(group_id: int, horses: List[int]):
         "$set": {
             "horses": horses
         }
-    }, returnNewDocument=True)
+    }, return_document=ReturnDocument.AFTER)
 
 
 async def update_rank_status(group_id: int, horse: int, rank: int):

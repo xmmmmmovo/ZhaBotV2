@@ -20,7 +20,6 @@ async def event1(matcher: Matcher, horses: List[int]):
     猎马人相关事件
     """
     try:
-        # suffer_house = choice(list(filter(lambda x: x != 0, horses)))
         suffer_house = choice(
             list(filter(lambda x: x != -1, map(lambda x: -1 if x[1] <= 0 else x[0], enumerate(horses)))))
     except:
@@ -84,12 +83,8 @@ async def event5(matcher: Matcher, horses: List[int]):
     except:
         return -1, None
     await matcher.send(f'芜湖~{suffer_house[0] + 1}号马与{suffer_house[1] + 1}号马突然交换了跑道！')
-    from nonebot.log import logger
-    logger.debug(horses)
-    logger.debug(suffer_house)
     horses[suffer_house[0]], horses[suffer_house[1]] = \
         horses[suffer_house[1]], horses[suffer_house[0]]
-    logger.debug(horses)
     return 1, set(suffer_house)
 
 

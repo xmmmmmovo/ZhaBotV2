@@ -19,10 +19,3 @@ admin_collection: AgnosticCollection = db.get_collection("admin")
 shot_collection: AgnosticCollection = db.get_collection("shot")
 group_collection: AgnosticCollection = db.get_collection("group")
 horserace_collection: AgnosticCollection = db.get_collection("horserace")
-
-# user_collection: AgnosticCollection = None
-# plugin_collection: AgnosticCollection = None
-# admin_collection: AgnosticCollection = None
-# shot_collection: AgnosticCollection = None
-# group_collection: AgnosticCollection = None
-# horserace_collection: AgnosticCollection = None
