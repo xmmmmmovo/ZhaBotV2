@@ -23,7 +23,7 @@ hyper = on_command("兴奋剂", rule=not_to_me(), permission=simple, priority=93
 banana = on_command("香蕉皮", rule=not_to_me(), permission=simple, priority=93)
 pary = on_command("祈祷", rule=not_to_me(), permission=simple, priority=93)
 start_race = on_command("startrace", aliases={
-    "开始赛马"}, rule=not_to_me(), permission=admin, priority=93)
+    "开始赛马"}, rule=not_to_me(), permission=simple, priority=93)
 shop = on_command("shop", aliases={"商品列表", "商品目录"},
                   rule=not_to_me(), permission=simple, priority=93)
 horse_ready = on_command("horseready", aliases={"赛马", "准备赛马"}, rule=not_to_me(), permission=simple,
@@ -31,7 +31,7 @@ horse_ready = on_command("horseready", aliases={"赛马", "准备赛马"}, rule=
 
 
 @horse_ready.handle()
-async def handle_first_receive(bot: Bot, event: GroupMessageEvent, state: dict):
+async def handle_first_receive(matcher: Matcher, args: Message = CommandArg()):
     record = await find_race_model(event.group_id)
     if record is None:
         await init_horse_race_game(event.group_id, config.horse_num, config.slide_length)
@@ -42,7 +42,7 @@ async def handle_first_receive(bot: Bot, event: GroupMessageEvent, state: dict):
 
 
 @bet_horse.handle()
-async def handle_first_receive(bot: Bot, event: GroupMessageEvent, state: dict):
+async def handle_first_receive(matcher: Matcher, args: Message = CommandArg()):
     record = await find_race_model(event.group_id)
     user = state["user"]
 
@@ -65,7 +65,7 @@ async def handle_first_receive(bot: Bot, event: GroupMessageEvent, state: dict):
 
 
 @bet_horse.got("horse", prompt="请输入想要押马的编号")
-async def handle_key(bot: Bot, event: GroupMessageEvent, state: dict):
+async def handle_key(matcher: Matcher, args: Message = CommandArg()):
     horse = 0
     try:
         horse = int(state["horse"])
@@ -77,7 +77,7 @@ async def handle_key(bot: Bot, event: GroupMessageEvent, state: dict):
 
 
 @bet_horse.got("money", prompt="请输入押注钱数")
-async def handle_key(bot: Bot, event: GroupMessageEvent, state: dict):
+async def handle_key(matcher: Matcher, args: Message = CommandArg()):
     money = state["money"]
     if is_number(money):
         money = rfloat(state["user"]["money"]) \
@@ -89,7 +89,7 @@ async def handle_key(bot: Bot, event: GroupMessageEvent, state: dict):
     if money > float(state["user"]["money"]) or money < 0:
         await bet_horse.finish("没有足够的金钱！")
 
-    await update_bet_money(event.group_id, event.user_id, money, horse)
+    await update_bet_money(event.group_id, event.user_id, money * 0.99, horse)
     await bet_horse.finish(f"成功押注{horse}号马{money}{config.money_unit}")
 
 
@@ -111,7 +111,8 @@ async def final_check(record: dict, group_id: int):
 
 
 @start_race.handle()
-async def handle_first_receive(bot: Bot, event: GroupMessageEvent, state: dict):
+async def handle_first_receive(matcher: Matcher, args: Message = CommandArg()):
+    await sleep(1)
     record = await find_race_model(event.group_id)
     if record is None:
         await bet_horse.finish("还未有人准备开始赛马!")
@@ -191,9 +192,9 @@ async def handle_first_receive(bot: Bot, event: GroupMessageEvent, state: dict):
     for (qq, v) in user_list.items():
         await update_user_money_model(qq, event.group_id, v[2])
     await remove_horserace_model(event.group_id)
-    await start_race.finish("已结算！")
+    await start_race.finish("已结算!")
 
 
 @shop.handle()
-async def handle_first_receive(bot: Bot, event: GroupMessageEvent, state: dict):
+async def handle_first_receive(matcher: Matcher, args: Message = CommandArg()):
     await shop.finish('\n'.join(tools_def))

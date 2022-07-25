@@ -24,7 +24,7 @@ plugin_status = on_command("plugins", aliases={'菜单', '帮助'}, rule=not_to_
 
 
 @add_admin.handle()
-async def handle_first_receive(bot: Bot, event: GroupMessageEvent, state: dict):
+async def handle_first_receive(matcher: Matcher, args: Message = CommandArg()):
     msg = event.get_message()
     add_people = []
     dict = await admin_collection.find_one(find_admin_model(event.group_id))
@@ -47,13 +47,13 @@ async def handle_first_receive(bot: Bot, event: GroupMessageEvent, state: dict):
 
 
 @remove_admin.handle()
-async def handle_first_receive(bot: Bot, event: GroupMessageEvent, state: dict):
+async def handle_first_receive(matcher: Matcher, args: Message = CommandArg()):
     msg = event.get_message()
     add_people = []
     dict = await admin_collection.find_one(find_admin_model(event.group_id))
     if dict is None:
         await remove_admin.finish("删除成功！")
-
+    
     admin_list = dict["qqlist"]
     for seg in msg:  # type: MessageSegment
         seg: MessageSegment
@@ -69,19 +69,19 @@ async def handle_first_receive(bot: Bot, event: GroupMessageEvent, state: dict):
 
 
 @withdraw.handle()
-async def handle_first_receive(bot: Bot, event: Event, state: dict):
+async def handle_first_receive(matcher: Matcher, args: Message = CommandArg()):
     pass
 
 
 @enable.handle()
-async def handle_first_receive(bot: Bot, event: Event, state: dict):
+async def handle_first_receive(matcher: Matcher, args: Message = CommandArg()):
     args = event.get_plaintext().strip()
     if args:
         state["name"] = args.split(" ")
 
 
 @enable.got("name", prompt="插件名")
-async def handle_plugin(bot: Bot, event: GroupMessageEvent, state: dict):
+async def handle_plugin(matcher: Matcher, args: Message = CommandArg()):
     names = state["name"]
     plugins_names = plugins.keys()
     if len(names) == 1 and names[0] == "all":
@@ -93,14 +93,14 @@ async def handle_plugin(bot: Bot, event: GroupMessageEvent, state: dict):
 
 
 @disable.handle()
-async def handle_first_receive(bot: Bot, event: Event, state: dict):
+async def handle_first_receive(matcher: Matcher, args: Message = CommandArg()):
     args = event.get_plaintext().strip()
     if args:
         state["name"] = args.split(" ")
 
 
 @disable.got("name", prompt="插件名")
-async def handle_plugin(bot: Bot, event: GroupMessageEvent, state: dict):
+async def handle_plugin(matcher: Matcher, args: Message = CommandArg()):
     names = state["name"]
     plugins_names = plugins.keys()
     if len(names) == 1 and names[0] == "all":
@@ -112,7 +112,7 @@ async def handle_plugin(bot: Bot, event: GroupMessageEvent, state: dict):
 
 
 @admin_list.handle()
-async def handle_first_receive(bot: Bot, event: GroupMessageEvent, state: dict):
+async def handle_first_receive(matcher: Matcher, args: Message = CommandArg()):
     res = await admin_collection.find_one(find_admin_model(event.group_id))
     mbuilder = Message("管理列表如下：\n")
     members = await bot.get_group_member_list(group_id=event.group_id)
@@ -128,7 +128,7 @@ async def handle_first_receive(bot: Bot, event: GroupMessageEvent, state: dict):
 
 
 @plugin_status.handle()
-async def handle_first_receive(bot: Bot, event: GroupMessageEvent, state: dict):
+async def handle_first_receive(matcher: Matcher, args: Message = CommandArg()):
     res = await find_plugin_model(event.group_id)
     mbuilder = Message("插件开启情况如下：\n")
     index = 0

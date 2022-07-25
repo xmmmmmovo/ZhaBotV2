@@ -31,20 +31,22 @@ addmoney = on_command("addmoney",
 
 
 @mymoney.handle()
-async def handle_first_receive(bot: Bot, event: GroupMessageEvent, state: dict):
+async def handle_first_receive(matcher: Matcher, args: Message = CommandArg()):
     user = state["user"]
     money = user.get("money")
     await mymoney.finish(MessageSegment.at(event.user_id) + f"您当前的资产为：{round(money, 2)}{config.money_unit}")
 
 
 @pay.handle()
-async def handle_first_receive(bot: Bot, event: GroupMessageEvent, state: dict):
+async def handle_first_receive(matcher: Matcher, args: Message = CommandArg()):
     user = state["user"]
     ats = message_to_at_list(event.get_message())
     needs = message_to_args(event.get_message())
     idx = 0
     for (at, need) in zip(ats, needs):
         fneed = float(need)
+        if fneed < 0:
+            await pay.finish('请支付正确的金额！')
         if float(user["money"]) < fneed:
             await pay.finish(f"金钱不足以支付剩下的人！已支付{idx}人!")
         idx += 1
@@ -59,7 +61,7 @@ async def handle_first_receive(bot: Bot, event: GroupMessageEvent, state: dict):
 
 
 @addmoney.handle()
-async def handle_first_receive(bot: Bot, event: GroupMessageEvent, state: dict):
+async def handle_first_receive(matcher: Matcher, args: Message = CommandArg()):
     ats = message_to_at_list(event.get_message())
     needs = message_to_args(event.get_message())
     logger.debug(needs)
@@ -75,7 +77,7 @@ async def handle_first_receive(bot: Bot, event: GroupMessageEvent, state: dict):
 
 
 @borrow.handle()
-async def handle_first_receive(bot: Bot, event: GroupMessageEvent, state: dict):
+async def handle_first_receive(matcher: Matcher, args: Message = CommandArg()):
     # user = state["user"]
     # ats = message_to_at_list(event.get_message())
     # needs = message_to_args(event.get_message())
@@ -102,7 +104,7 @@ async def handle_first_receive(bot: Bot, event: GroupMessageEvent, state: dict):
 
 
 @rank.handle()
-async def handle_first_receive(bot: Bot, event: GroupMessageEvent, state: dict):
+async def handle_first_receive(matcher: Matcher, args: Message = CommandArg()):
     u_list = user_collection.find(
         {"group_id": event.group_id}).sort("money", -1)
     group_list = await bot.get_group_member_list(group_id=event.group_id)
@@ -128,6 +130,6 @@ async def handle_first_receive(bot: Bot, event: GroupMessageEvent, state: dict):
                 break
             continue
 
-        ans += f"第{cnt}名: {group_dict[int(u['qq'])]} 现有财产:{u['money']}$\n"
+        ans += f"第{cnt}名: {group_dict[int(u['qq'])]} 现有财产:{round(u['money'],2)}$\n"
 
     await rank.finish(ans)

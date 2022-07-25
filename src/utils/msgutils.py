@@ -1,5 +1,5 @@
 from typing import Iterable, List
-from nonebot.adapters.cqhttp import Message
+from nonebot.adapters.onebot.v11 import Message
 
 
 def message_to_text(msg: Message) -> str:

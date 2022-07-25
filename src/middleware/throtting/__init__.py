@@ -1,8 +1,8 @@
 """
 节流中间件
 """
-from nonebot.adapters.cqhttp import Bot, Event
-from nonebot.adapters.cqhttp.event import GroupMessageEvent
+from nonebot.adapters.onebot.v11 import Bot, Event
+from nonebot.adapters.onebot.v11.event import GroupMessageEvent
 from nonebot.message import run_preprocessor
 from nonebot.matcher import Matcher
 from nonebot.typing import T_State

@@ -1,9 +1,9 @@
 from nonebot.log import logger
-from nonebot.adapters.cqhttp import Bot, Event, GroupMessageEvent, Message, MessageSegment
-from nonebot.adapters.cqhttp.permission import Permission
+from nonebot.adapters.onebot.v11 import Bot, Event, GroupMessageEvent, Message, MessageSegment, message
+from nonebot.permission import Permission
 
 from src.db import admin_collection, plugin_collection
-from src.model.plugin import find_plugin_model
+from src.db.model.plugin import find_plugin_model
 
 
 def Admin() -> Permission:
@@ -13,7 +13,8 @@ def Admin() -> Permission:
         group = await admin_collection.find_one({"group_id": event.group_id})
         if group is None:
             return False
-        if str(event.sender.user_id) in group["qqlist"]:
+        if str(event.sender.user_id) in group["qqlist"] or event.sender.role in {
+                "owner", "admin"}:
             return True
         return False
 

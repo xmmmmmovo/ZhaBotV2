@@ -1,4 +1,3 @@
-import money as money
 from src.db import user_collection
 
 

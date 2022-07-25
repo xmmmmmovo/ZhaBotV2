@@ -26,7 +26,7 @@ shot = on_command("ping", rule=not_to_me(), permission=simple, priority=94)
 
 
 @start.handle()
-async def handle_first_receive(bot: Bot, event: GroupMessageEvent, state: dict):
+async def handle_first_receive(matcher: Matcher, args: Message = CommandArg()):
     record = await find_or_insert_shot_model(event.group_id)
     logger.info(record)
     logger.debug(record)
@@ -41,7 +41,7 @@ async def handle_first_receive(bot: Bot, event: GroupMessageEvent, state: dict):
 
 
 @shot.handle()
-async def handle_first_receive(bot: Bot, event: GroupMessageEvent, state: dict):
+async def handle_first_receive(matcher: Matcher, args: Message = CommandArg()):
     user = state["user"]
     record = await find_shot_model(event.group_id)
     if record is None:

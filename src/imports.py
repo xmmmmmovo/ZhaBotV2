@@ -1,12 +1,15 @@
 from random import randint
 
-from nonebot import get_driver, on_command, logger, export, on_request, on_notice, require, on_message,on_regex, on_startswith, on_shell_command
-from nonebot.plugin import plugins
+from nonebot import get_driver, on_command, export, on_request, on_notice, require, on_message, on_regex, on_startswith, on_shell_command
+from nonebot.plugin import get_loaded_plugins
 from nonebot.rule import to_me
-from nonebot.adapters.cqhttp import Bot, Event, Message, MessageSegment
+from nonebot.adapters.onebot.v11 import Bot, Event, Message, MessageSegment
+from nonebot.matcher import Matcher
+from nonebot.params import Arg, CommandArg, ArgPlainText
 from nonebot.permission import Permission, SUPERUSER
-from nonebot.adapters.cqhttp.permission import GROUP_ADMIN, GROUP_OWNER, GROUP_MEMBER
-from nonebot.adapters.cqhttp.event import GroupMessageEvent, PrivateMessageEvent
+from nonebot.adapters.onebot.v11.permission import GROUP_ADMIN, GROUP_OWNER, GROUP_MEMBER
+from nonebot.adapters.onebot.v11.event import GroupMessageEvent, PrivateMessageEvent
+from nonebot.log import logger
 
 from pymongo.results import InsertOneResult, UpdateResult
 

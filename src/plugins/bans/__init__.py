@@ -22,14 +22,14 @@ unban = on_command("unban", rule=private_call(),
 
 
 @sleep.handle()
-async def handle_first_receive(bot: Bot, event: GroupMessageEvent, state: dict):
+async def handle_first_receive(matcher: Matcher, args: Message = CommandArg()):
     await bot.set_group_ban(group_id=event.group_id,
                             user_id=event.user_id, duration=60 * 60 * config.sleep_time)
     await sleep.finish("ok！好好睡觉!")
 
 
 @ban.handle()
-async def handle_first_receive(bot: Bot, event: GroupMessageEvent, state: dict):
+async def handle_first_receive(matcher: Matcher, args: Message = CommandArg()):
     md = state["_matched_dict"]
     type = md["type"]
     if md["time"] == "半":

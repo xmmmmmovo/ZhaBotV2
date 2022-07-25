@@ -18,8 +18,8 @@ chat = on_message(rule=to_me(), permission=simple, priority=100)
 
 
 @chat.handle()
-async def handle_first_receive(bot: Bot, event: Event, state: dict):
-    msgs = message_to_text(event.get_message())
+async def handle_first_receive(matcher: Matcher, args: Message = CommandArg()):
+    msgs = message_to_text(args)
     if not msgs:
         await chat.finish("昂，怎么了嘛")
     elif msgs in {"在嘛", "在吗"}:

@@ -5,7 +5,7 @@ from .config import Config
 global_config = get_driver().config
 config = Config(**global_config.dict())
 
-auth = Auth("signin")
+auth = Auth("checkin")
 simple = auth.auth_permission()
 export().name = "签到"
 export().description = "签到功能"
@@ -13,11 +13,9 @@ export().description = "签到功能"
 scheduler: AsyncIOScheduler = require("nonebot_plugin_apscheduler").scheduler
 
 check_in = on_command("签到", rule=not_to_me(), permission=simple, priority=96)
-test = on_command("test", rule=not_to_me(), permission=simple, priority=96)
-
 
 @check_in.handle()
-async def handle_first_receive(bot: Bot, event: GroupMessageEvent, state: dict):
+async def handle_first_receive(matcher: Matcher, args: Message = CommandArg()):
     user = state["user"]
     group = state["group"]
     sign_money = randint(config.sign_in_money_lower_limit,

@@ -1,7 +1,6 @@
-from nonebot import Bot
-from nonebot.adapters.cqhttp import Event
+from nonebot.adapters.onebot.v11 import Event, Bot
 from nonebot.rule import Rule
-from nonebot.adapters.cqhttp.event import GroupMessageEvent, PrivateMessageEvent, PokeNotifyEvent
+from nonebot.adapters.onebot.v11.event import GroupMessageEvent, PrivateMessageEvent, PokeNotifyEvent
 from nonebot.typing import T_State
 
 
