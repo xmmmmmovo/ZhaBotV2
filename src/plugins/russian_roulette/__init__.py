@@ -26,7 +26,7 @@ shot = on_command("ping", rule=not_to_me(), permission=simple, priority=94)
 
 
 @start.handle()
-async def handle_first_receive(bot: Bot, event: Event, group: Arg("group")):
+async def handle_first_receive(bot: Bot, event: Event, group: dict = Arg("group")):
     record = await find_or_insert_shot_model(event.group_id)
     if record["has_started"] == False:
         k = randint(0, 5)

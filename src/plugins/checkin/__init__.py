@@ -28,8 +28,35 @@ async def handle_first_receive(matcher: Matcher, event: Event, args: Message = C
 
 
 @check_rank.handle()
-async def handle_first_receive(matcher: Matcher, event: Event, args: Message = CommandArg(), user: dict = Arg("user"), group: dict = Arg("group")):
-    pass
+async def handle_first_receive(bot: Bot, event: Event, args: Message = CommandArg(), user: dict = Arg("user"), group: dict = Arg("group")):
+    u_list = user_collection.find(
+        {"group_id": event.group_id}).sort("days", -1)
+    group_list = await bot.get_group_member_list(group_id=event.group_id)
+
+    group_dict = {}
+    for u in group_list:
+        group_dict[u['user_id']] = u['card'] \
+            if u['card'] != '' else u['nickname']
+
+    ans = '江江江江！本群土豪排名公布~\n'
+    cnt = 0
+
+    user_id = event.user_id
+    for u in await u_list.to_list(None):
+        if group_dict.get(int(u['qq'])) is None:
+            continue
+
+        cnt += 1
+
+        if cnt > 20:
+            if event.sub_type != "anonymous" and user_id == u['qq']:
+                ans += f"你是第{cnt}名 累计签到{int(u['days'])}天"
+                break
+            continue
+
+        ans += f"第{cnt}名: {group_dict[int(u['qq'])]} 累计签到:{int(u['days'])}天\n"
+
+    await check_rank.finish(ans)
 
 
 @scheduler.scheduled_job("cron", day="*", hour="5", minute="0", id="reset_signed_task", kwargs={})

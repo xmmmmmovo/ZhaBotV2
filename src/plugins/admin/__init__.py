@@ -2,6 +2,8 @@
 from src.imports import *
 from .config import Config
 
+from nonebot.plugin import _plugins
+
 global_config = get_driver().config
 config = Config(**global_config.dict())
 
@@ -24,15 +26,15 @@ plugin_status = on_command("plugins", aliases={'菜单', '帮助'}, rule=not_to_
 
 
 @add_admin.handle()
-async def handle_first_receive(matcher: Matcher, args: Message = CommandArg()):
+async def handle_first_receive(bot: Bot, event: Event):
     msg = event.get_message()
     add_people = []
     dict = await admin_collection.find_one(find_admin_model(event.group_id))
     for seg in msg:  # type: MessageSegment
         seg: MessageSegment
         if seg.type == "at" and seg.data["qq"] != "all" and \
-                (await bot.get_group_member_info(group_id=event.group_id, user_id=seg.data["qq"]))["role"] not in {
-            "owner", "admin"}:
+            (await bot.get_group_member_info(group_id=event.group_id, user_id=seg.data["qq"]))["role"] not in {
+                "owner", "admin"}:
             # if seg.type == "at":
             add_people.append(seg.data["qq"])
     if len(add_people) == 0:
@@ -47,19 +49,19 @@ async def handle_first_receive(matcher: Matcher, args: Message = CommandArg()):
 
 
 @remove_admin.handle()
-async def handle_first_receive(matcher: Matcher, args: Message = CommandArg()):
+async def handle_first_receive(bot: Bot, event: Event):
     msg = event.get_message()
     add_people = []
     dict = await admin_collection.find_one(find_admin_model(event.group_id))
     if dict is None:
         await remove_admin.finish("删除成功！")
-    
+
     admin_list = dict["qqlist"]
     for seg in msg:  # type: MessageSegment
         seg: MessageSegment
         if seg.type == "at" and seg.data["qq"] != "all" and seg.data["qq"] not in admin_list and \
-                (await bot.get_group_member_info(group_id=event.group_id, user_id=seg.data["qq"]))["role"] not in {
-            "owner", "admin"}:
+            (await bot.get_group_member_info(group_id=event.group_id, user_id=seg.data["qq"]))["role"] not in {
+                "owner", "admin"}:
             # if seg.type == "at":
             add_people.append(seg.data["qq"])
     if len(add_people) == 0:
@@ -69,21 +71,20 @@ async def handle_first_receive(matcher: Matcher, args: Message = CommandArg()):
 
 
 @withdraw.handle()
-async def handle_first_receive(matcher: Matcher, args: Message = CommandArg()):
+async def handle_first_receive():
     pass
 
 
 @enable.handle()
-async def handle_first_receive(matcher: Matcher, args: Message = CommandArg()):
+async def handle_first_receive(matcher: Matcher, event: Event):
     args = event.get_plaintext().strip()
     if args:
-        state["name"] = args.split(" ")
+        matcher.set_arg("name", args.split(" "))
 
 
 @enable.got("name", prompt="插件名")
-async def handle_plugin(matcher: Matcher, args: Message = CommandArg()):
-    names = state["name"]
-    plugins_names = plugins.keys()
+async def handle_plugin(event: Event, names: list = Arg("name")):
+    plugins_names = _plugins.keys()
     if len(names) == 1 and names[0] == "all":
         names = plugins_names
     else:
@@ -93,16 +94,15 @@ async def handle_plugin(matcher: Matcher, args: Message = CommandArg()):
 
 
 @disable.handle()
-async def handle_first_receive(matcher: Matcher, args: Message = CommandArg()):
+async def handle_first_receive(matcher: Matcher, event: Event):
     args = event.get_plaintext().strip()
     if args:
-        state["name"] = args.split(" ")
+        matcher.set_arg("name", args.split(" "))
 
 
 @disable.got("name", prompt="插件名")
-async def handle_plugin(matcher: Matcher, args: Message = CommandArg()):
-    names = state["name"]
-    plugins_names = plugins.keys()
+async def handle_plugin(event: Event, names: list = Arg("name")):
+    plugins_names = _plugins.keys()
     if len(names) == 1 and names[0] == "all":
         names = plugins_names
     else:
@@ -112,7 +112,7 @@ async def handle_plugin(matcher: Matcher, args: Message = CommandArg()):
 
 
 @admin_list.handle()
-async def handle_first_receive(matcher: Matcher, args: Message = CommandArg()):
+async def handle_first_receive(bot: Bot, event: Event):
     res = await admin_collection.find_one(find_admin_model(event.group_id))
     mbuilder = Message("管理列表如下：\n")
     members = await bot.get_group_member_list(group_id=event.group_id)
@@ -128,16 +128,16 @@ async def handle_first_receive(matcher: Matcher, args: Message = CommandArg()):
 
 
 @plugin_status.handle()
-async def handle_first_receive(matcher: Matcher, args: Message = CommandArg()):
+async def handle_first_receive(bot: Bot, event: Event):
     res = await find_plugin_model(event.group_id)
     mbuilder = Message("插件开启情况如下：\n")
     index = 0
-    for (name, plugin) in plugins.items():
+    for (name, plugin) in _plugins.items():
         if plugin.export.get("name") == None:
             continue
         index += 1
         mbuilder.append(
             f"{index}.{plugin.export.get('name'):5}({name:5}):{plugin.export.get('description'):10}"
             f"{'️🔵' if (res is not None and bool(res.get(name))) else '⚫':^1}\n")
-    mbuilder.append("注：.enable .disable开关插件")
+    mbuilder.append("注：.enable .disable开关插件 需要管理权限")
     await plugin_status.finish(mbuilder)

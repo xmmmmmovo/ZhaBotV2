@@ -10,7 +10,7 @@ notice_handler = on_notice(block=True)
 
 
 @request_handler.handle()
-async def handle_first_receive(matcher: Matcher, args: Message = CommandArg()):
+async def handle_first_receive():
     # if config.request_on:
     #     flag = str(event.id)
     #     if event.type == "friend":
@@ -22,5 +22,5 @@ async def handle_first_receive(matcher: Matcher, args: Message = CommandArg()):
 
 
 @notice_handler.handle()
-async def handle_first_receive(matcher: Matcher, args: Message = CommandArg()):
+async def handle_first_receive():
     pass

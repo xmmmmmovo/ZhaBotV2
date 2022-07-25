@@ -31,7 +31,7 @@ horse_ready = on_command("horseready", aliases={"赛马", "准备赛马"}, rule=
 
 
 @horse_ready.handle()
-async def handle_first_receive(matcher: Matcher, args: Message = CommandArg()):
+async def handle_first_receive(event: Event):
     record = await find_race_model(event.group_id)
     if record is None:
         await init_horse_race_game(event.group_id, config.horse_num, config.slide_length)
@@ -42,9 +42,8 @@ async def handle_first_receive(matcher: Matcher, args: Message = CommandArg()):
 
 
 @bet_horse.handle()
-async def handle_first_receive(matcher: Matcher, args: Message = CommandArg()):
+async def handle_first_receive(matcher: Matcher, event: Event, user: dict = Arg("user")):
     record = await find_race_model(event.group_id)
-    user = state["user"]
 
     if record is None:
         await bet_horse.finish("还未有人准备开始赛马!")
@@ -58,17 +57,16 @@ async def handle_first_receive(matcher: Matcher, args: Message = CommandArg()):
     if len(args) == 0:
         return
     elif len(args) == 1:
-        state["horse"] = args[0]
+        matcher.set_arg("horse", args[0])
     elif len(args) == 2:
-        state["horse"] = args[0]
-        state["money"] = args[1]
+        matcher.set_arg("horse", args[0])
+        matcher.set_arg("money", args[1])
 
 
 @bet_horse.got("horse", prompt="请输入想要押马的编号")
-async def handle_key(matcher: Matcher, args: Message = CommandArg()):
-    horse = 0
+async def handle_key(matcher: Matcher, horse: str = Arg("horse")):
     try:
-        horse = int(state["horse"])
+        horse = int(horse)
     except:
         await bet_horse.finish("马编号输入格式错误！请重新输入")
 
@@ -77,16 +75,14 @@ async def handle_key(matcher: Matcher, args: Message = CommandArg()):
 
 
 @bet_horse.got("money", prompt="请输入押注钱数")
-async def handle_key(matcher: Matcher, args: Message = CommandArg()):
-    money = state["money"]
+async def handle_key(matcher: Matcher, event: Event, money: str = Arg("money"), horse: str = Arg("horse"), user: dict = Arg("user")):
     if is_number(money):
-        money = rfloat(state["user"]["money"]) \
-            if state["money"] in config.stud_list \
-            else rfloat(state["money"])
+        money = rfloat(money) \
+            if money in config.stud_list \
+            else rfloat(money)
     else:
         await bet_horse.finish("金钱输入格式错误！请重新输入")
-    horse = int(state["horse"])
-    if money > float(state["user"]["money"]) or money < 0:
+    if money > float(user["money"]) or money < 0:
         await bet_horse.finish("没有足够的金钱！")
 
     await update_bet_money(event.group_id, event.user_id, money * 0.99, horse)
@@ -111,7 +107,7 @@ async def final_check(record: dict, group_id: int):
 
 
 @start_race.handle()
-async def handle_first_receive(matcher: Matcher, args: Message = CommandArg()):
+async def handle_first_receive(event: Event):
     await sleep(1)
     record = await find_race_model(event.group_id)
     if record is None:

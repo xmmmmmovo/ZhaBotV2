@@ -1,7 +1,6 @@
 from random import randint
 
 from nonebot import get_driver, on_command, export, on_request, on_notice, require, on_message, on_regex, on_startswith, on_shell_command
-from nonebot.plugin import get_loaded_plugins
 from nonebot.rule import to_me
 from nonebot.adapters.onebot.v11 import Bot, Event, Message, MessageSegment
 from nonebot.matcher import Matcher
