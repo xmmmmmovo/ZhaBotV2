@@ -38,7 +38,7 @@ async def handle_first_receive(bot: Bot, event: Event, args: Message = CommandAr
         group_dict[u['user_id']] = u['card'] \
             if u['card'] != '' else u['nickname']
 
-    ans = '江江江江！本群土豪排名公布~\n'
+    ans = '江江江江！本群签到排名公布~\n'
     cnt = 0
 
     user_id = event.user_id

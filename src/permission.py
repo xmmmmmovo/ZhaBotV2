@@ -5,7 +5,7 @@ from nonebot.permission import Permission
 from src.db import admin_collection, plugin_collection
 from src.db.model.plugin import find_plugin_model
 
-
+# deprecated
 def Admin() -> Permission:
     async def __permission(bot: Bot, event: Event) -> bool:
         if not isinstance(event, GroupMessageEvent):
