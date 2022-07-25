@@ -15,7 +15,7 @@ def find_user_model(qq, group_id):
             "group_id": int(group_id)}
 
 
-def update_user_model(qq, group_id, money: float, has_signed: bool):
+def update_user_model(qq, group_id, money: float, has_signed: bool, append_days: int):
     return {
         "qq": qq,
         "group_id": group_id
@@ -24,7 +24,8 @@ def update_user_model(qq, group_id, money: float, has_signed: bool):
             "has_signed": bool(has_signed)
         },
         "$inc": {
-            "money": float(money)
+            "money": float(money),
+            "days": int(append_days)
         }
     }
 

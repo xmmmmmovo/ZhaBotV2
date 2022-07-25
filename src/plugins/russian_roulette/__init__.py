@@ -3,8 +3,8 @@ from itertools import groupby
 from random import randint, seed
 
 from src.imports import *
-from src.model.group import *
-from src.model.shot import *
+from src.db.model.group import *
+from src.db.model.shot import *
 
 from .config import Config
 
@@ -26,23 +26,20 @@ shot = on_command("ping", rule=not_to_me(), permission=simple, priority=94)
 
 
 @start.handle()
-async def handle_first_receive(matcher: Matcher, args: Message = CommandArg()):
+async def handle_first_receive(bot: Bot, event: Event, group: Arg("group")):
     record = await find_or_insert_shot_model(event.group_id)
-    logger.info(record)
-    logger.debug(record)
     if record["has_started"] == False:
         k = randint(0, 5)
         await init_shot_game(event.group_id, k)
         await start.finish(f"已开始俄罗斯轮盘，规则：\n"
                            "每位人员都可以.ping/。ping，如果被pong了将会损失10%(管理员和群主是30%)的资产(少于30的会直接清0但是不会禁言)并分配给前面所有参与的人员\n"
-                           f"复活时间{state['group']['ban_time']}min(禁言1min)")
+                           f"复活时间{group['ban_time']}min(禁言1min)")
     else:
         await start.finish("本轮已经开始了咯，请'.ping/。ping'")
 
 
 @shot.handle()
-async def handle_first_receive(matcher: Matcher, args: Message = CommandArg()):
-    user = state["user"]
+async def handle_first_receive(bot: Bot, event: Event, user: dict = Arg("user")):
     record = await find_shot_model(event.group_id)
     if record is None:
         await shot.finish("本轮已结束，请'。gun'重新开始")

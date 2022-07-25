@@ -1,5 +1,5 @@
 # import nonebot
-from src.model.horserace import *
+from src.db.model.horserace import *
 from src.imports import *
 from src.utils.msgutils import is_number
 from .config import Config

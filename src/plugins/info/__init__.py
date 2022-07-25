@@ -35,11 +35,3 @@ async def server_data_handler(bot: Bot, matcher: Matcher):
 
 info.handle()(server_data_handler)
 poke.handle()(server_data_handler)
-
-test = on_command('test', rule=not_to_me(), permission=SUPERUSER, priority=91)
-
-@test.handle()
-async def _(matcher: Matcher, args: Message = CommandArg()):
-    import os
-    await test.finish(MessageSegment.image(f'file:///{os.getcwd()}/data/weather-icon/100.png'))
-    

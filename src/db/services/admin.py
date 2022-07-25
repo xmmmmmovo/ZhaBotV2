@@ -1,0 +1,2 @@
+from model.admin import *
+

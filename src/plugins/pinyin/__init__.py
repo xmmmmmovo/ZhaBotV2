@@ -13,13 +13,12 @@ export().description = "拼音识字"
 
 
 pinyinp = on_command("pinyin", aliases={
-                    "拼音"}, rule=not_to_me(), permission=simple, priority=90)
+    "拼音"}, rule=not_to_me(), permission=simple, priority=90)
 
 
 @pinyinp.handle()
 async def handle_first_receive(matcher: Matcher, args: Message = CommandArg()):
-    args = str(event.get_plaintext()).strip()
-    data = pinyin(args)
+    data = pinyin(args.extract_plain_text().strip())
     if data:
         await pinyinp.finish(" ".join(map(lambda l: '暂无数据' if l[0] == '' else l[0], data)))
     else:

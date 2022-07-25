@@ -5,10 +5,9 @@ from nonebot.adapters.onebot.v11 import Bot, Event
 from nonebot.adapters.onebot.v11.event import GroupMessageEvent
 from nonebot.message import run_preprocessor
 from nonebot.matcher import Matcher
-from nonebot.typing import T_State
 from src.db import user_collection, group_collection
-from src.model.user import find_user_model, new_user_model
-from src.model.group import find_group_model, new_group_model
+from src.db.model.user import find_user_model, new_user_model
+from src.db.model.group import find_group_model, new_group_model
 
 @run_preprocessor
 async def model_ensurance(matcher: Matcher, event: Event):
