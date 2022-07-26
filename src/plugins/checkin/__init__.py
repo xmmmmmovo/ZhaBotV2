@@ -31,7 +31,7 @@ async def handle_first_receive(matcher: Matcher, event: Event, args: Message = C
 async def handle_first_receive(bot: Bot, event: Event, args: Message = CommandArg(), user: dict = Arg("user"), group: dict = Arg("group")):
     u_list = user_collection.find(
         {"group_id": event.group_id}).sort("days", -1)
-    group_list = await bot.get_group_member_list(group_id=event.group_id)
+    group_list = await get_group_member_list_cached(bot, event.group_id)
 
     group_dict = {}
     for u in group_list:
