@@ -1,7 +1,5 @@
 from typing import Iterable
 
-from nonebot import logger
-
 from src.db import plugin_collection
 
 
