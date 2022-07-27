@@ -1,3 +1,4 @@
+from typing import Union
 from src.imports import *
 
 from .config import Config
@@ -40,9 +41,12 @@ async def handle_city(matcher: Matcher, city: str = ArgPlainText("city")):
 
 @weather.got("city_idx", prompt="请输入你想要获取的城市编号")
 async def handle_city_list(matcher: Matcher,
-                           city_idx: str = Arg("city_idx"),
+                           city_idx: Union[int, Message] = Arg("city_idx"),
                            city_list: list = Arg("location")):
-    idx = int(city_idx)
+    if isinstance(city_idx, int):
+        idx = city_idx
+    else:
+        idx = int(city_idx.extract_plain_text())
     if idx < 0 or idx >= len(city_list):
         await weather.finish("请输入正确的编号！")
     city_id = city_list[idx]["id"]

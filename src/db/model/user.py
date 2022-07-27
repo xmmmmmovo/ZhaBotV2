@@ -1,12 +1,13 @@
 from src.db import user_collection
 
 
-def new_user_model(qq: int, group_id: int, money, has_signed):
+def new_user_model(qq: int, group_id: int, money, has_signed: bool, days: int):
     return {
         "qq": int(qq),
         "group_id": int(group_id),
         "money": float(money),
-        "has_signed": bool(has_signed)
+        "has_signed": bool(has_signed),
+        "days": int(days)
     }
 
 

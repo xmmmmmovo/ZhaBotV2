@@ -37,12 +37,14 @@ async def handle_first_receive(event: Event, user: dict = Arg("user")):
 
 
 @pay.handle()
-async def handle_first_receive(event: Event, user: dict = Arg("user")):
-    ats = message_to_at_list(event.get_message())
-    needs = message_to_args(event.get_message())
+async def handle_first_receive(event: Event, user: dict = Arg("user"), args: Message = CommandArg()):
+    ats = message_to_at_list(args)
+    needs = message_to_args(args)
     idx = 0
     for (at, need) in zip(ats, needs):
         fneed = float(need)
+        logger.debug(fneed)
+        logger.debug(fneed < 0)
         if fneed < 0:
             await pay.finish('请支付正确的金额！')
         if float(user["money"]) < fneed:
@@ -59,9 +61,9 @@ async def handle_first_receive(event: Event, user: dict = Arg("user")):
 
 
 @addmoney.handle()
-async def handle_first_receive(event: Event):
-    ats = message_to_at_list(event.get_message())
-    needs = message_to_args(event.get_message())
+async def handle_first_receive(event: Event, args: Message = CommandArg()):
+    ats = message_to_at_list(args)
+    needs = message_to_args(args)
     logger.debug(needs)
     idx = 0
     for (at, need) in zip(ats, needs):

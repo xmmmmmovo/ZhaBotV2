@@ -33,7 +33,7 @@ async def handle_first_receive(bot: Bot, event: Event, group: dict = Arg("group"
         await init_shot_game(event.group_id, k)
         await start.finish(f"已开始俄罗斯轮盘，规则：\n"
                            "每位人员都可以.ping/。ping，如果被pong了将会损失10%(管理员和群主是30%)的资产(少于30的会直接清0但是不会禁言)并分配给前面所有参与的人员\n"
-                           f"复活时间{group['ban_time']}min(禁言1min)")
+                           f"复活时间1min(禁言1min)")
     else:
         await start.finish("本轮已经开始了咯，请'.ping/。ping'")
 
@@ -49,6 +49,8 @@ async def handle_first_receive(bot: Bot, event: Event, user: dict = Arg("user"))
 
     if k == idx:
         money = float(user["money"])
+        if money <= 0:
+            await shot.finish("没钱是不能赌命的哦！")
         if money < 30:
             money = 30
         else:

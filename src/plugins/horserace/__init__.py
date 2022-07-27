@@ -42,7 +42,7 @@ async def handle_first_receive(event: Event):
 
 
 @bet_horse.handle()
-async def handle_first_receive(matcher: Matcher, event: Event, user: dict = Arg("user")):
+async def handle_first_receive(matcher: Matcher, event: Event, user: dict = Arg("user"), args: Message = CommandArg()):
     record = await find_race_model(event.group_id)
 
     if record is None:
@@ -51,7 +51,7 @@ async def handle_first_receive(matcher: Matcher, event: Event, user: dict = Arg(
     if record["has_started"]:
         await bet_horse.finish("赛马比赛已经开始，无法下注！")
 
-    msg = event.get_plaintext().strip()
+    msg = args.extract_plain_text().strip()
     args = split("[,，]", msg)
 
     if len(args) == 0:
@@ -84,8 +84,8 @@ async def handle_key(matcher: Matcher, event: Event, money: str = Arg("money"), 
         await bet_horse.finish("金钱输入格式错误！请重新输入")
     if money > float(user["money"]) or money < 0:
         await bet_horse.finish("没有足够的金钱！")
-
-    await update_bet_money(event.group_id, event.user_id, money * 0.99, horse)
+    
+    await update_bet_money(event.group_id, event.user_id, money * 0.99, int(horse))
     await bet_horse.finish(f"成功押注{horse}号马{money}{config.money_unit}")
 
 
@@ -148,7 +148,6 @@ async def handle_first_receive(event: Event):
         event_num = randint(0, len(events))
         status = -1
         if event_num != 0:
-
             status, suf_list = await events[event_num](start_race, horses)
         await start_race.send("\n".join(f"{i + 1} {update(i, pos)}" for (i, pos) in enumerate(horses)))
         record = await update_in_game_vars(event.group_id, horses)
