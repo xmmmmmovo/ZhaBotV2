@@ -4,6 +4,10 @@
 .env.prod
 bot.js
 
+node_modules
+.temp
+.cache
+
 ### Python ###
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -137,7 +137,7 @@ async def handle_first_receive(bot: Bot, event: Event):
             continue
         index += 1
         mbuilder.append(
-            f"{index}.{plugin.export.get('name'):5}({name:5}):{plugin.export.get('description'):10}"
+            f"{index}.{plugin.export.get('name'):^5}({name:^5}):{plugin.export.get('description'):^10}"
             f"{'️🔵' if (res is not None and bool(res.get(name))) else '⚫':^1}\n")
     mbuilder.append("注：.enable .disable开关插件 需要管理权限")
     await plugin_status.finish(mbuilder)
