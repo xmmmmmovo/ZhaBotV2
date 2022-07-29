@@ -1,6 +1,7 @@
 import { defineUserConfig } from 'vuepress'
 const { defaultTheme } = require('@vuepress/theme-default')
 const { searchPlugin } = require('@vuepress/plugin-search')
+const { palettePlugin } = require('@vuepress/plugin-palette')
 
 export default defineUserConfig({
     lang: 'zh-CN',
@@ -15,6 +16,7 @@ export default defineUserConfig({
         docsDir: 'docs',
         navbar: [
             { text: '使用说明', link: '/guide/' },
+            { text: '部署教程', link: '/deploy/' },
             { text: '更新日志', link: '/changelog.md' },
         ],
         sidebar: {
@@ -24,13 +26,23 @@ export default defineUserConfig({
                     collapsable: false,
                     children: [
                         'admin',
-                        'bans'
+                        'bans',
+                        'chat',
+                        'checkin',
+                        'economic',
+                        'horserace',
+                        'info',
+                        'notice_request',
+                        'sx',
+                        'tasks',
+                        'weather'
                     ]
                 }
             ]
         }
     }),
-    plugins:[
-        searchPlugin({})
+    plugins: [
+        searchPlugin({}),
+        palettePlugin({ preset: 'sass' }),
     ]
 })
