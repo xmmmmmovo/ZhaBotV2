@@ -2,7 +2,7 @@
 home: true
 actions:
 - text: 开始使用
-  link: /guide
+  link: /guide/
 features:
 - title: 简洁
   details: 代码量少但是功能完善

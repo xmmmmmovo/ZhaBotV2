@@ -24,15 +24,15 @@
 .addadmin @n1 @n2......
 ```
 
-
-
 ## 删除管理员
 
 ### 使用格式
 
 ```
-。removeadmin
+。removeadmin @n1 @n2......
 ```
+
+![插件管理员功能截图](./assets/admin1.png)
 
 
 ## 启用插件

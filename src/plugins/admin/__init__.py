@@ -26,8 +26,7 @@ plugin_status = on_command("plugins", aliases={'菜单', '帮助'}, rule=not_to_
 
 
 @add_admin.handle()
-async def handle_first_receive(bot: Bot, event: Event):
-    msg = event.get_message()
+async def handle_first_receive(bot: Bot, event: Event, msg=CommandArg()):
     add_people = []
     dict = await admin_collection.find_one(find_admin_model(event.group_id))
     for seg in msg:  # type: MessageSegment
@@ -49,24 +48,21 @@ async def handle_first_receive(bot: Bot, event: Event):
 
 
 @remove_admin.handle()
-async def handle_first_receive(bot: Bot, event: Event):
-    msg = event.get_message()
-    add_people = []
-    dict = await admin_collection.find_one(find_admin_model(event.group_id))
-    if dict is None:
+async def handle_first_receive(bot: Bot, event: Event, msg = CommandArg()):
+    remove_people = []
+    admin_dict = await admin_collection.find_one(find_admin_model(event.group_id))
+    if admin_dict is None:
         await remove_admin.finish("删除成功！")
-
-    admin_list = dict["qqlist"]
+    admin_list = admin_dict["qqlist"]
     for seg in msg:  # type: MessageSegment
         seg: MessageSegment
-        if seg.type == "at" and seg.data["qq"] != "all" and seg.data["qq"] not in admin_list and \
+        if seg.type == "at" and seg.data["qq"] != "all" and seg.data["qq"] in admin_list and \
             (await bot.get_group_member_info(group_id=event.group_id, user_id=seg.data["qq"]))["role"] not in {
                 "owner", "admin"}:
-            # if seg.type == "at":
-            add_people.append(seg.data["qq"])
-    if len(add_people) == 0:
+            remove_people.append(seg.data["qq"])
+    if len(remove_people) == 0:
         await remove_admin.finish("没有人被删除!")
-    res = await admin_collection.update_one(*remove_admin_model(add_people, event.group_id))
+    res = await admin_collection.update_one(*remove_admin_model(remove_people, event.group_id))
     await remove_admin.finish("删除成功！")
 
 
