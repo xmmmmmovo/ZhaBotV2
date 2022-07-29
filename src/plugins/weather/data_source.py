@@ -11,7 +11,7 @@ WEATHER_API_URL = 'https://devapi.qweather.com/v7/weather/'
 RAIN_API_URL = 'https://devapi.qweather.com/v7/minutely/5m'
 AIR_API_URL = 'https://devapi.qweather.com/v7/air/now'
 
-WEATHER_ICON_DIR = "assets/weather-icon/"
+WEATHER_ICON_DIR = "weather-icon/"
 
 @cached(ttl=8 * 60 * 60)
 async def fetch_city_data(key: str, location: str) -> Optional[Dict]:

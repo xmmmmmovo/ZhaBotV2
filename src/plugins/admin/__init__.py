@@ -1,4 +1,5 @@
 # import nonebot
+from src.core.resource import res_wrapper
 from src.imports import *
 from .config import Config
 
@@ -21,8 +22,10 @@ withdraw = on_command("withdraw", rule=not_to_me(),
                       permission=SUPERUSER | GROUP_OWNER | GROUP_ADMIN | GROUP_MEMBER | admin, priority=1)
 admin_list = on_command("adminlist", rule=not_to_me(),
                         permission=SUPERUSER | GROUP_OWNER | GROUP_ADMIN | GROUP_MEMBER, priority=1)
-plugin_status = on_command("plugins", aliases={'菜单', '帮助'}, rule=not_to_me(),
+plugin_status = on_command("plugins", aliases={'插件状态'}, rule=not_to_me(),
                            permission=SUPERUSER | GROUP_OWNER | GROUP_ADMIN | GROUP_MEMBER, priority=1)
+help = on_command("help", aliases={'菜单', '帮助'}, rule=not_to_me(),
+                  permission=SUPERUSER | GROUP_OWNER | GROUP_ADMIN | GROUP_MEMBER, priority=1)
 
 
 @add_admin.handle()
@@ -48,7 +51,7 @@ async def handle_first_receive(bot: Bot, event: Event, msg=CommandArg()):
 
 
 @remove_admin.handle()
-async def handle_first_receive(bot: Bot, event: Event, msg = CommandArg()):
+async def handle_first_receive(bot: Bot, event: Event, msg=CommandArg()):
     remove_people = []
     admin_dict = await admin_collection.find_one(find_admin_model(event.group_id))
     if admin_dict is None:
@@ -137,3 +140,10 @@ async def handle_first_receive(bot: Bot, event: Event):
             f"{'️🔵' if (res is not None and bool(res.get(name))) else '⚫':^1}\n")
     mbuilder.append("注：.enable .disable开关插件 需要管理权限")
     await plugin_status.finish(mbuilder)
+
+
+@help.handle()
+async def handle_first_receive():
+    await help.finish(MessageSegment.share("https://bot.fivezha.cn/guide/", "小扎机器人使用说明",
+                                           "如果查看插件状态请使用\"。plugins\"或者\"。插件状态\"",
+                                           res_wrapper("misc/avatar.jpg")))
