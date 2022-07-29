@@ -1,5 +1,6 @@
 import { defineUserConfig } from 'vuepress'
 const { defaultTheme } = require('@vuepress/theme-default')
+const { searchPlugin } = require('@vuepress/plugin-search')
 
 export default defineUserConfig({
     lang: 'zh-CN',
@@ -22,10 +23,14 @@ export default defineUserConfig({
                     text: '使用说明',
                     collapsable: false,
                     children: [
-                        '',
+                        'admin',
+                        'bans'
                     ]
                 }
             ]
         }
-    })
+    }),
+    plugins:[
+        searchPlugin({})
+    ]
 })

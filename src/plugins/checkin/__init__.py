@@ -50,11 +50,11 @@ async def handle_first_receive(bot: Bot, event: Event, args: Message = CommandAr
 
         if cnt > 20:
             if event.sub_type != "anonymous" and user_id == u['qq']:
-                ans += f"你是第{cnt}名 累计签到{int(u['days'])}天"
+                ans += f"你是第{cnt}名 连续签到{int(u['days'])}天"
                 break
             continue
 
-        ans += f"第{cnt}名: {group_dict[int(u['qq'])]} 累计签到:{int(u['days'])}天\n"
+        ans += f"第{cnt}名: {group_dict[int(u['qq'])]} 连续签到:{int(u['days'])}天\n"
 
     await check_rank.finish(ans)
 
