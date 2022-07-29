@@ -1,0 +1,1 @@
+const e=JSON.parse('{"key":"v-3f54ed4d","path":"/guide/russian_roulette.html","title":"","lang":"zh-CN","frontmatter":{},"excerpt":"","headers":[],"git":{"updatedTime":1659054888000,"contributors":[{"name":"xmmmmmovo","email":"13256172360@163.com","commits":1}]},"filePathRelative":"guide/russian_roulette.md"}');export{e as data};
