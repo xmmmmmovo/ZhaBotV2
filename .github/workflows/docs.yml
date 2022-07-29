@@ -33,5 +33,5 @@ jobs:
     - name: Deploy to gh-pages
       uses: peaceiris/actions-gh-pages@v3
       with:
-        deploy_key: ${{ secrets.TOKEN }}
+        github_token: ${{ secrets.TOKEN }}
         publish_dir: ./docs/.vuepress/dist
