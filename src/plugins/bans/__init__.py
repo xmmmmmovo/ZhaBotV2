@@ -45,7 +45,7 @@ async def handle_first_receive(bot: Bot, event: Event, md: dict = Arg("_matched_
 
 
 @unban.handle()
-async def handle_first_receive(bot: Bot, event: PrivateMessageEvent):
-    await bot.set_group_ban(group_id=event.get_plaintext().strip(),
+async def handle_first_receive(bot: Bot, event: PrivateMessageEvent, msg: Message = CommandArg()):
+    await bot.set_group_ban(group_id=msg.extract_plain_text().strip(),
                             user_id=event.user_id, duration=0)
     await unban.finish("解禁成功")
