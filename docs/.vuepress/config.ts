@@ -35,7 +35,9 @@ export default defineUserConfig({
                         'notice_request',
                         'sx',
                         'tasks',
-                        'weather'
+                        'weather',
+                        'russian_roulette',
+                        'qa'
                     ]
                 }
             ]
