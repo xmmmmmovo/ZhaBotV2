@@ -12,8 +12,11 @@
 - [简单管理](./admin.md)
 - [禁言插件](./bans.md)
 - [服务器状态插件](./info.md)
-- 俄罗斯轮盘插件
-- 天气插件
-- 签到插件
-- 赛马插件
-- 缩写插件
+- [俄罗斯轮盘插件](./russian_roulette.md)
+- [天气插件](./weather.md)
+- [签到插件](./chat.md)
+- [赛马插件](./horserace.md)
+- [缩写插件](./sx.md)
+- [拼音插件](./pinyin.md)
+- [聊天插件](./chat.md)
+- [资产插件](./economic.md)
