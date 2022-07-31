@@ -10,8 +10,8 @@ global_config = get_driver().config
 config = Config(**global_config.dict())
 
 info = on_command("info", rule=private_call(),
-                  permission=SUPERUSER, priority=91)
-poke = on_message(poke(), permission=SUPERUSER, priority=91)
+                  permission=SUPERUSER, priority=9)
+poke = on_message(poke(), permission=SUPERUSER, priority=9)
 
 
 async def server_data_handler(bot: Bot, matcher: Matcher):

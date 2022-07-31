@@ -18,8 +18,8 @@ export().description = "一夜暴富"
 
 scheduler: AsyncIOScheduler = require("nonebot_plugin_apscheduler").scheduler
 
-start = on_command("gun", rule=not_to_me(), permission=simple, priority=94)
-shot = on_command("ping", rule=not_to_me(), permission=simple, priority=94)
+start = on_command("gun", rule=not_to_me(), permission=simple, priority=10)
+shot = on_command("ping", rule=not_to_me(), permission=simple, priority=10)
 
 # TODO：超时取消本次俄罗斯轮盘
 # TODO: 增加决斗功能

@@ -14,11 +14,11 @@ simple = auth.auth_permission()
 time_to_seconds = {"小时": 60*60, "天": 60*60*24, "分钟": 60, "秒": 1, "秒钟": 1}
 
 sleep = on_startswith("来一份精致睡眠套餐", rule=allow_all(),
-                      permission=simple, priority=92)
+                      permission=simple, priority=10)
 ban = on_regex(r"来一份(?P<time>.*?)(?P<type>[小时,分钟,秒,秒钟,天]+)的?禁言", rule=allow_all(),
-               permission=simple, priority=92)
+               permission=simple, priority=10)
 unban = on_command("unban", rule=private_call(),
-                   permission=SUPERUSER, priority=92)
+                   permission=SUPERUSER, priority=10)
 
 
 @sleep.handle()

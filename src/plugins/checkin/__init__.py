@@ -12,8 +12,8 @@ export().description = "签到功能"
 
 scheduler: AsyncIOScheduler = require("nonebot_plugin_apscheduler").scheduler
 
-check_in = on_command("签到", rule=not_to_me(), permission=simple, priority=96)
-check_rank = on_command("签到排名", rule=not_to_me, permission=simple, priority=96)
+check_in = on_command("签到", rule=not_to_me(), permission=simple, priority=10)
+check_rank = on_command("签到排名", rule=not_to_me, permission=simple, priority=10)
 
 
 @check_in.handle()

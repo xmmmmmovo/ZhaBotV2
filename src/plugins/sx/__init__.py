@@ -14,7 +14,7 @@ export().name = "缩写"
 export().description = "能不能好好说话"
 
 sx = on_command("sx", aliases={"缩写"},
-                rule=not_to_me(), permission=simple, priority=95)
+                rule=not_to_me(), permission=simple, priority=10)
 
 
 @sx.handle()

@@ -13,7 +13,7 @@ simple = auth.auth_permission()
 export().name = "天气"
 export().description = "用来查天气的"
 
-weather = on_command("天气", rule=not_to_me(), permission=simple, priority=98)
+weather = on_command("天气", rule=not_to_me(), permission=simple, priority=10)
 
 
 @weather.handle()

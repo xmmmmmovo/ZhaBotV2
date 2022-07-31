@@ -17,17 +17,17 @@ export().description = "查询金钱和转账"
 scheduler: AsyncIOScheduler = require("nonebot_plugin_apscheduler").scheduler
 
 mymoney = on_command("money", aliases={"我的资产", "我的财产", "余额"}, rule=not_to_me(), permission=simple,
-                     priority=97)
+                     priority=10)
 rank = on_command("rank", aliases={"排名", "排行"},
-                  rule=not_to_me(), permission=simple, priority=97)
+                  rule=not_to_me(), permission=simple, priority=10)
 
 pay = on_command("pay", aliases={"转账"},
-                 rule=not_to_me(), permission=simple, priority=97)
+                 rule=not_to_me(), permission=simple, priority=10)
 
-borrow = on_command("borrow", rule=not_to_me(), permission=simple, priority=97)
+borrow = on_command("borrow", rule=not_to_me(), permission=simple, priority=10)
 
 addmoney = on_command("addmoney",
-                      rule=not_to_me(), permission=SUPERUSER, priority=97)
+                      rule=not_to_me(), permission=SUPERUSER, priority=10)
 
 
 @mymoney.handle()

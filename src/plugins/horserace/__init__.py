@@ -17,17 +17,17 @@ simple = auth.auth_permission()
 admin = auth.admin_auth_permission()
 
 bet_horse = on_command(
-    "押马", aliases={"压马"}, rule=not_to_me(), permission=simple, priority=93)
-chocolate = on_command("巧克力", rule=not_to_me(), permission=simple, priority=93)
-hyper = on_command("兴奋剂", rule=not_to_me(), permission=simple, priority=93)
-banana = on_command("香蕉皮", rule=not_to_me(), permission=simple, priority=93)
-pary = on_command("祈祷", rule=not_to_me(), permission=simple, priority=93)
+    "押马", aliases={"压马"}, rule=not_to_me(), permission=simple, priority=10)
+chocolate = on_command("巧克力", rule=not_to_me(), permission=simple, priority=10)
+hyper = on_command("兴奋剂", rule=not_to_me(), permission=simple, priority=10)
+banana = on_command("香蕉皮", rule=not_to_me(), permission=simple, priority=10)
+pary = on_command("祈祷", rule=not_to_me(), permission=simple, priority=10)
 start_race = on_command("startrace", aliases={
-    "开始赛马"}, rule=not_to_me(), permission=simple, priority=93)
+    "开始赛马"}, rule=not_to_me(), permission=simple, priority=10)
 shop = on_command("shop", aliases={"商品列表", "商品目录"},
-                  rule=not_to_me(), permission=simple, priority=93)
+                  rule=not_to_me(), permission=simple, priority=10)
 horse_ready = on_command("horseready", aliases={"赛马", "准备赛马"}, rule=not_to_me(), permission=simple,
-                         priority=93)
+                         priority=10)
 
 
 @horse_ready.handle()

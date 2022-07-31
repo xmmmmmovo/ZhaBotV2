@@ -13,7 +13,7 @@ export().description = "拼音识字"
 
 
 pinyinp = on_command("pinyin", aliases={
-    "拼音"}, rule=not_to_me(), permission=simple, priority=90)
+    "拼音"}, rule=not_to_me(), permission=simple, priority=10)
 
 
 @pinyinp.handle()
