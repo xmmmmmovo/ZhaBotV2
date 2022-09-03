@@ -17,6 +17,9 @@ export().description = "聊天捏"
 chat = on_message(rule=to_me(), permission=simple, priority=11)
 
 
+# https://neuhub.jd.com/market/api/483
+# https://ai.baidu.com/unit/home#/home
+
 @chat.handle()
 async def handle_first_receive(args: Message = CommandArg()):
     msgs = message_to_text(args)

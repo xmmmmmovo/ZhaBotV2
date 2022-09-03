@@ -70,7 +70,15 @@ async def handle_first_receive(bot: Bot, event: Event, msg=CommandArg()):
 
 
 @withdraw.handle()
-async def handle_first_receive():
+async def handle_first_receive(event: Event, msg: Message = CommandArg()):
+    # TODO:不知道是不是bug
+    logger.debug(str(msg))
+    logger.debug(str(event.get_message()))
+    for m in msg:
+        logger.debug(str(m))
+
+    for m in event.get_message():
+        logger.debug(str(m))
     pass
 
 
