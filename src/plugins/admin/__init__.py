@@ -83,8 +83,8 @@ async def handle_first_receive(event: Event, msg: Message = CommandArg()):
 
 
 @enable.handle()
-async def handle_first_receive(matcher: Matcher, event: Event):
-    args = event.get_plaintext().strip()
+async def handle_first_receive(matcher: Matcher, event: Event, args: Message = CommandArg()):
+    args = args.extract_plain_text().strip()
     if args:
         matcher.set_arg("name", args.split(" "))
 
@@ -101,8 +101,8 @@ async def handle_plugin(event: Event, names: list = Arg("name")):
 
 
 @disable.handle()
-async def handle_first_receive(matcher: Matcher, event: Event):
-    args = event.get_plaintext().strip()
+async def handle_first_receive(matcher: Matcher, event: Event, args: Message = CommandArg()):
+    args = event.extract_plain_text().strip()
     if args:
         matcher.set_arg("name", args.split(" "))
 

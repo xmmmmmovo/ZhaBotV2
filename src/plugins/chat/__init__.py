@@ -14,7 +14,7 @@ simple = auth.auth_permission()
 export().name = "聊天"
 export().description = "聊天捏"
 
-chat = on_message(rule=to_me(), permission=simple, priority=11)
+chat = on_message(rule=to_me(), permission=simple, priority=15)
 
 
 # https://neuhub.jd.com/market/api/483

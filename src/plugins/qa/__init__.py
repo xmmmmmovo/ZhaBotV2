@@ -11,15 +11,15 @@ simple = auth.auth_permission()
 admin = auth.admin_auth_permission()
 
 create_question = on_command(
-    "创建问题", rule=not_to_me, permission=SUPERUSER | GROUP_OWNER | GROUP_ADMIN | admin, priority=10)
+    "创建问题", rule=not_to_me(), permission=SUPERUSER | GROUP_OWNER | GROUP_ADMIN | admin, priority=10)
 update_question = on_command(
-    "更新问题", rule=not_to_me, permission=SUPERUSER | GROUP_OWNER | GROUP_ADMIN | admin, priority=10)
-list_question = on_command("列出问题", rule=not_to_me,
+    "更新问题", rule=not_to_me(), permission=SUPERUSER | GROUP_OWNER | GROUP_ADMIN | admin, priority=10)
+list_question = on_command("列出问题", rule=not_to_me(),
                            permission=simple, priority=10)
 delete_question = on_command(
-    "删除问题", rule=not_to_me, permission=SUPERUSER | GROUP_OWNER | GROUP_ADMIN | admin, priority=10)
+    "删除问题", rule=not_to_me(), permission=SUPERUSER | GROUP_OWNER | GROUP_ADMIN | admin, priority=10)
 index_quesiton = on_startswith(
-    "#", rule=not_to_me, permission=simple, priority=10)
+    "#", rule=not_to_me(), permission=simple, priority=10)
 
 
 @create_question.handle()

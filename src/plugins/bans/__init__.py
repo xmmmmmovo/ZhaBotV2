@@ -1,7 +1,9 @@
-# import nonebot
+import datetime
+
 from src.imports import *
 import cn2an
 
+from src.core.resource import res_wrapper
 from src.utils.timeutils import check_time_valid
 
 from .config import Config
@@ -14,15 +16,23 @@ simple = auth.auth_permission()
 time_to_seconds = {"小时": 60*60, "天": 60*60*24, "分钟": 60, "秒": 1, "秒钟": 1}
 
 sleep = on_startswith("来一份精致睡眠套餐", rule=allow_all(),
-                      permission=simple, priority=10)
+                      permission=simple, priority=11)
 ban = on_regex(r"来一份(?P<time>.*?)(?P<type>[小时,分钟,秒,秒钟,天]+)的?禁言", rule=allow_all(),
-               permission=simple, priority=10)
+               permission=simple, priority=12)
 unban = on_command("unban", rule=private_call(),
                    permission=SUPERUSER, priority=10)
+
+SLEEP_TOO_EARLY_VOICE = res_wrapper("voice/LiYongle.mp3")
 
 
 @sleep.handle()
 async def handle_first_receive(bot: Bot, event: Event):
+    now = datetime.datetime.now()
+    td_9pm = now.replace(hour=21, minute=0, second=0, microsecond=0)
+    td_10am = now.replace(hour=10, minute=0, second=0, microsecond=0)
+    if now < td_9pm and now > td_10am:
+        await sleep.finish(MessageSegment.record(SLEEP_TOO_EARLY_VOICE))
+
     await bot.set_group_ban(group_id=event.group_id,
                             user_id=event.user_id, duration=60 * 60 * config.sleep_time)
     await sleep.finish("ok！好好睡觉!")

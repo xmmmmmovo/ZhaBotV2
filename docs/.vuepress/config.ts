@@ -37,7 +37,8 @@ export default defineUserConfig({
                         'tasks',
                         'weather',
                         'russian_roulette',
-                        'qa'
+                        'qa',
+                        'genshin_voice'
                     ]
                 }
             ]
