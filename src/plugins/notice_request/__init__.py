@@ -1,4 +1,6 @@
+from typing import Union
 from src.imports import *
+from nonebot.adapters.onebot.v11.event import FriendRequestEvent, GroupRequestEvent
 
 from .config import Config
 
@@ -10,15 +12,13 @@ notice_handler = on_notice(block=True)
 
 
 @request_handler.handle()
-async def handle_first_receive():
-    # if config.request_on:
-    #     flag = str(event.id)
-    #     if event.type == "friend":
-    #         await bot.set_friend_add_request(flag=flag, approve=True)
-    #     elif event.type == "group":
-    #         # succ = await insert_qq_group(event.group_id, template)
-    #         await bot.set_group_add_request(flag=flag, sub_type=event.sub_type, approve=True)
-    pass
+async def handle_first_receive(bot: Bot, event: Union[FriendRequestEvent, GroupRequestEvent]):
+    if config.request_on:
+        flag = event.flag
+        if event.request_type == "friend":
+            await event.approve(bot)
+        elif event.request_type == "group" and event.sub_type == "invite":
+            await event.approve(bot)
 
 
 @notice_handler.handle()

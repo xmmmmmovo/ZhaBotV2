@@ -4,6 +4,8 @@
 .env.prod
 bot.js
 
+data/
+
 node_modules
 .temp
 .cache

@@ -1,14 +1,19 @@
+from datetime import datetime
+
 # import nonebot
-from src.core.resource import res_wrapper
+from src.core.resource import file_path_wrapper, res_wrapper
 from src.imports import *
 from .config import Config
 
 from nonebot.plugin import _plugins
+from nonebot import get_bot
+from ujson import dump
 
 global_config = get_driver().config
 config = Config(**global_config.dict())
 
 admin = Admin()
+scheduler: AsyncIOScheduler = require("nonebot_plugin_apscheduler").scheduler
 
 add_admin = on_command("addadmin", rule=not_to_me(),
                        permission=SUPERUSER | GROUP_OWNER | GROUP_ADMIN, priority=1)
@@ -26,6 +31,8 @@ plugin_status = on_command("plugins", aliases={'插件状态'}, rule=not_to_me()
                            permission=SUPERUSER | GROUP_OWNER | GROUP_ADMIN | GROUP_MEMBER, priority=1)
 help = on_command("help", aliases={'菜单', '帮助'}, rule=not_to_me(),
                   permission=SUPERUSER | GROUP_OWNER | GROUP_ADMIN | GROUP_MEMBER, priority=1)
+backup = on_command("backup", rule=not_to_me(),
+                    permission=SUPERUSER | GROUP_OWNER | GROUP_ADMIN | admin, priority=1)
 
 
 @add_admin.handle()
@@ -102,7 +109,7 @@ async def handle_plugin(event: Event, names: list = Arg("name")):
 
 @disable.handle()
 async def handle_first_receive(matcher: Matcher, event: Event, args: Message = CommandArg()):
-    args = event.extract_plain_text().strip()
+    args = args.extract_plain_text().strip()
     if args:
         matcher.set_arg("name", args.split(" "))
 
@@ -155,3 +162,37 @@ async def handle_first_receive():
     await help.finish(MessageSegment.share("https://bot.fivezha.cn/guide/", "小扎机器人使用说明",
                                            "如果查看插件状态请使用\"。plugins\"或者\"。插件状态\"",
                                            res_wrapper("misc/avatar.jpg")))
+
+
+async def backup_to_json(bot: Bot, group_id, group_name):
+    users = await get_group_member_list_cached(bot, group_id)
+    with open(file_path_wrapper(f"data/{group_id}.json"), 'w', encoding="utf-8") as f:
+        dump({
+            "group_name": group_name,
+            "group_members": list(map(lambda u: {
+                "QQ": u["user_id"],
+                "昵称": u["nickname"],
+                "群名片": u["card"],
+                "加群时间": datetime.utcfromtimestamp(u["join_time"]).strftime("%Y-%m-%d %H:%M:%S"),
+                "最后发言时间": datetime.utcfromtimestamp(u["last_sent_time"]).strftime("%Y-%m-%d %H:%M:%S"),
+                "等级": u["level"],
+                "是否管理": u["role"],
+                "是否不良记录": u["unfriendly"],
+                "专属头衔": u["title"]
+            }, users))
+        }, f, ensure_ascii=False)
+
+
+@backup.handle()
+async def handle_first_receive(bot: Bot, event: GroupMessageEvent):
+    await backup_to_json(bot, event.group_id, (await bot.get_group_info(group_id=event.group_id, no_cache=False))["group_name"])
+    await backup.finish("备份成功！")
+
+
+@scheduler.scheduled_job("cron", day="*", hour="0", minute="0", id="backup_group_members_task", kwargs={})
+async def backup_cron():
+    logger.info("start backup group members!")
+    bot: Bot = get_bot()
+    g_list = await bot.get_group_list()
+    for group in g_list:
+        await backup_to_json(bot, group["group_id"], group["group_name"])

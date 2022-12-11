@@ -13,6 +13,17 @@ info = on_command("info", rule=private_call(),
                   permission=SUPERUSER, priority=9)
 poke = on_message(poke(), permission=SUPERUSER, priority=9)
 
+members = on_command("members", rule=private_call(),
+                     permission=SUPERUSER, priority=9)
+
+
+@members.handle()
+async def handle_first_receive(bot: Bot, event: Event, args: Message = CommandArg()):
+    args = args.extract_plain_text().strip()
+    logger.info(args)
+    group_list = await get_group_member_list_cached(bot, int(args))
+    logger.info(group_list)
+
 
 async def server_data_handler(bot: Bot, matcher: Matcher):
     per_cpu_status = psutil.cpu_percent(interval=1, percpu=True)
