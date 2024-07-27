@@ -1,9 +1,17 @@
 from nonebot.log import logger
-from nonebot.adapters.onebot.v11 import Bot, Event, GroupMessageEvent, Message, MessageSegment, message
+from nonebot.adapters.onebot.v11 import (
+    Bot,
+    Event,
+    GroupMessageEvent,
+    Message,
+    MessageSegment,
+    message,
+)
 from nonebot.permission import Permission
 
 from src.db import admin_collection, plugin_collection
 from src.db.model.plugin import find_plugin_model
+
 
 # deprecated
 def Admin() -> Permission:
@@ -14,7 +22,9 @@ def Admin() -> Permission:
         if group is None:
             return False
         if str(event.sender.user_id) in group["qqlist"] or event.sender.role in {
-                "owner", "admin"}:
+            "owner",
+            "admin",
+        }:
             return True
         return False
 
@@ -40,6 +50,7 @@ class Auth:
             if plugins is not None and bool(plugins.get(plugin_name)):
                 return await perm(bot, event)
             return False
+
         return Permission(__permission)
 
     def admin_auth_permission(self, perm: Permission = Admin()):
@@ -54,4 +65,5 @@ class Auth:
             if plugins is not None and bool(plugins.get(plugin_name)):
                 return await perm(bot, event)
             return False
+
         return Permission(__permission)
