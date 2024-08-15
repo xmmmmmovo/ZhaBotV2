@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Set, Union
 
 # import nonebot
 from src.core.resource import file_path_wrapper, res_wrapper
@@ -6,7 +7,9 @@ from src.imports import *
 from .config import Config
 
 from nonebot.plugin import Plugin
-import nonebot
+from nonebot import get_loaded_plugins
+from nonebot.adapters.onebot.v11 import MessageSegment
+
 from nonebot import get_bot
 from ujson import dump
 
@@ -15,6 +18,8 @@ config = Config(**global_config.dict())
 
 admin = Admin()
 scheduler: AsyncIOScheduler = require("nonebot_plugin_apscheduler").scheduler
+
+plugins: Union[Set[Plugin], None] = None
 
 add_admin = on_command(
     "addadmin",
@@ -138,13 +143,19 @@ async def handle_enable(matcher: Matcher, event: Event, args: Message = CommandA
 
 
 @enable.got("name", prompt="插件名")
-async def handle_enable_got(event: Event, names: list = Arg("name")):
-    plugins_names = _plugins.keys()
+async def handle_enable_got(event: GroupMessageEvent, names: list = Arg("name")):
+    global plugins
+    if plugins is None:
+        plugins = get_loaded_plugins()
+    plugins_names = set(map(lambda plugin: plugin.name, plugins))
+    enable_names = []
     if len(names) == 1 and names[0] == "all":
-        names = plugins_names
+        enable_names = plugins_names
     else:
-        names = filter(lambda name: name in plugins_names, names)
-    res = await update_plugin_model(event.group_id, names, True)
+        enable_names = set(filter(lambda name: name in plugins_names, names))
+    if len(enable_names) == 0:
+        await enable.finish("没有找到插件！")
+    res = await update_plugin_model(event.group_id, enable_names, True)
     await enable.finish("开启成功！")
 
 
@@ -152,24 +163,30 @@ async def handle_enable_got(event: Event, names: list = Arg("name")):
 async def handle_first_receive(
     matcher: Matcher, event: Event, args: Message = CommandArg()
 ):
-    args = args.extract_plain_text().strip()
-    if args:
-        matcher.set_arg("name", args.split(" "))
+    args_str = args.extract_plain_text().strip()
+    if args_str:
+        matcher.set_arg("name", args_str.split(" "))
 
 
 @disable.got("name", prompt="插件名")
-async def handle_plugin(event: Event, names: list = Arg("name")):
-    plugins_names = _plugins.keys()
+async def handle_plugin(event: GroupMessageEvent, names: list = Arg("name")):
+    global plugins
+    if plugins is None:
+        plugins = get_loaded_plugins()
+    plugins_names = set(map(lambda plugin: plugin.name, plugins))
+    enable_names = []
     if len(names) == 1 and names[0] == "all":
-        names = plugins_names
+        enable_names = plugins_names
     else:
-        names = filter(lambda name: name in plugins_names, names)
-    res = await update_plugin_model(event.group_id, names, False)
+        enable_names = set(filter(lambda name: name in plugins_names, names))
+    if len(enable_names) == 0:
+        await enable.finish("没有找到插件！")
+    res = await update_plugin_model(event.group_id, enable_names, False)
     await disable.finish("关闭成功！")
 
 
 @admin_list.handle()
-async def handle_admin_list(bot: Bot, event: Event):
+async def handle_admin_list(bot: Bot, event: GroupMessageEvent):
     res = await admin_collection.find_one(find_admin_model(event.group_id))
     mbuilder = Message("管理列表如下：\n")
     members = await bot.get_group_member_list(group_id=event.group_id)
@@ -186,16 +203,19 @@ async def handle_admin_list(bot: Bot, event: Event):
 
 @plugin_status.handle()
 async def handle_plugin_status(bot: Bot, event: GroupMessageEvent):
-    plugins: set[Plugin] = nonebot.get_loaded_plugins()
+    global plugins
+    if plugins is None:
+        plugins = get_loaded_plugins()
     res = await find_plugin_model(event.group_id)
     mbuilder = Message("插件开启情况如下：\n")
-    index = 0
+    idx = 0
     for plugin in plugins:
-        if plugin.name == None:
+        logger.debug(plugin)
+        if plugin.metadata == None:
             continue
-        index += 1
+        idx += 1
         mbuilder.append(
-            f"{index}.{plugin.name:^5}({plugin.name:^5}):{plugin.metadata.description:^10}"
+            f"{idx}.{plugin.name:^5}({plugin.name:^5}):{plugin.metadata.description:^10}"
             f"{'️🔵' if (res is not None and bool(res.get(plugin.name))) else '⚫':^1}\n"
         )
     mbuilder.append("注：.enable .disable开关插件 需要管理权限")
@@ -247,7 +267,7 @@ async def backup_to_json(bot: Bot, group_id, group_name):
 
 
 @backup.handle()
-async def handle_first_receive(bot: Bot, event: GroupMessageEvent):
+async def handle_backup(bot: Bot, event: GroupMessageEvent):
     await backup_to_json(
         bot,
         event.group_id,
@@ -263,7 +283,7 @@ async def handle_first_receive(bot: Bot, event: GroupMessageEvent):
 )
 async def backup_cron():
     logger.info("start backup group members!")
-    bot: Bot = get_bot()
+    bot: Bot = get_bot()  # type: ignore
     g_list = await bot.get_group_list()
     for group in g_list:
         await backup_to_json(bot, group["group_id"], group["group_name"])
