@@ -6,13 +6,19 @@ from .config import Config
 global_config = get_driver().config
 config = Config(**global_config.dict())
 
+__plugin_meta__ = PluginMetadata(
+    name="chat",
+    description="聊天插件",
+    usage="没什么用",
+    type="application",
+    config=Config,
+    extra={},
+)
+
 auth = Auth("chat")
 simple = auth.auth_permission()
-export().name = "聊天"
-export().description = "聊天捏"
 
 chat = on_message(rule=to_me(), permission=simple, priority=15)
-
 
 @chat.handle()
 async def handle_first_receive(event: GroupMessageEvent):

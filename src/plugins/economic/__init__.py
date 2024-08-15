@@ -11,8 +11,15 @@ config = Config(**global_config.dict())
 
 auth = Auth("economic")
 simple = auth.auth_permission()
-export().name = "经济"
-export().description = "查询金钱和转账"
+
+__plugin_meta__ = PluginMetadata(
+    name="economic",
+    description="经济",
+    usage="查询金钱和转账",
+    type="application",
+    config=Config,
+    extra={},
+)
 
 scheduler: AsyncIOScheduler = require("nonebot_plugin_apscheduler").scheduler
 

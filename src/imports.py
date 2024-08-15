@@ -1,6 +1,6 @@
 from random import randint
 
-from nonebot import get_driver, on_command, export, on_request, on_notice, require, on_message, on_regex, on_startswith, on_shell_command
+from nonebot import get_driver, on_command, on_request, on_notice, require, on_message, on_regex, on_startswith, on_shell_command, require
 from nonebot.rule import to_me
 from nonebot.adapters.onebot.v11 import Bot, Event, Message, MessageSegment
 from nonebot.matcher import Matcher
@@ -9,6 +9,7 @@ from nonebot.permission import Permission, SUPERUSER
 from nonebot.adapters.onebot.v11.permission import GROUP_ADMIN, GROUP_OWNER, GROUP_MEMBER
 from nonebot.adapters.onebot.v11.event import GroupMessageEvent, PrivateMessageEvent
 from nonebot.log import logger
+from nonebot.plugin import PluginMetadata
 
 from pymongo.results import InsertOneResult, UpdateResult
 

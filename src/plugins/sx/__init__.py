@@ -10,12 +10,19 @@ config = Config(**global_config.dict())
 
 auth = Auth("sx")
 simple = auth.auth_permission()
-export().name = "缩写"
-export().description = "能不能好好说话"
 
-sx = on_command("sx", aliases={"缩写"},
-                rule=not_to_me(), permission=simple, priority=10)
+__plugin_meta__ = PluginMetadata(
+    name="sx",
+    description="缩写",
+    usage="能不能好好说话",
+    type="application",
+    config=Config,
+    extra={},
+)
 
+sx = on_command(
+    "sx", aliases={"缩写"}, rule=not_to_me(), permission=simple, priority=10
+)
 
 @sx.handle()
 async def handle_first_receive(matcher: Matcher, args: Message = CommandArg()):

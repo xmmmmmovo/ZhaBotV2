@@ -13,8 +13,15 @@ config = Config(**global_config.dict())
 
 auth = Auth("russian_roulette")
 simple = auth.auth_permission()
-export().name = "俄罗斯轮盘"
-export().description = "一夜暴富"
+
+__plugin_meta__ = PluginMetadata(
+    name="russian_roulette",
+    description="俄罗斯轮盘",
+    usage=".gun开始",
+    type="application",
+    config=Config,
+    extra={},
+)
 
 scheduler: AsyncIOScheduler = require("nonebot_plugin_apscheduler").scheduler
 

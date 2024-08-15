@@ -5,7 +5,16 @@ from .config import Config
 global_config = get_driver().config
 config = Config(**global_config.dict())
 
-auth = init_plugin(export(), "qa", "问答", "用于问答")
+__plugin_meta__ = PluginMetadata(
+    name="qa",
+    description="用于问答相关",
+    usage="",
+    type="application",
+    config=Config,
+    extra={},
+)
+
+auth = Auth("qa")
 
 simple = auth.auth_permission()
 admin = auth.admin_auth_permission()

@@ -8,8 +8,15 @@ config = Config(**global_config.dict())
 
 auth = Auth("checkin")
 simple = auth.auth_permission()
-export().name = "签到"
-export().description = "签到功能"
+
+__plugin_meta__ = PluginMetadata(
+    name="checkin",
+    description="签到插件",
+    usage="每日签到，5点刷新哦",
+    type="application",
+    config=Config,
+    extra={},
+)
 
 scheduler: AsyncIOScheduler = require("nonebot_plugin_apscheduler").scheduler
 

@@ -11,7 +11,17 @@ from .config import Config
 global_config = get_driver().config
 config = Config(**global_config.dict())
 
-auth = init_plugin(export(), "bans", "禁言", "用于特殊用途的禁言")
+auth = Auth("bans")
+
+__plugin_meta__ = PluginMetadata(
+    name="bans",
+    description="禁言",
+    usage="用于特殊用途的禁言",
+    type="application",
+    config=Config,
+    extra={},
+)
+
 simple = auth.auth_permission()
 time_to_seconds = {"小时": 60*60, "天": 60*60*24, "分钟": 60, "秒": 1, "秒钟": 1}
 

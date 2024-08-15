@@ -8,9 +8,15 @@ config = Config(**global_config.dict())
 
 auth = Auth("pinyin")
 simple = auth.auth_permission()
-export().name = "拼音"
-export().description = "拼音识字"
 
+__plugin_meta__ = PluginMetadata(
+    name="pinyin",
+    description="拼音",
+    usage="拼音识字",
+    type="application",
+    config=Config,
+    extra={},
+)
 
 pinyinp = on_command("pinyin", aliases={
     "拼音"}, rule=not_to_me(), permission=simple, priority=10)
