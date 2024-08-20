@@ -11,6 +11,9 @@ node_modules
 .cache
 
 qq_instance
+qqinst
+
+llm
 
 ### Python ###
 # Byte-compiled / optimized / DLL files

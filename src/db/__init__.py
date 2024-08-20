@@ -11,7 +11,7 @@ global_config = driver.config
 config = Config(**global_config.dict())
 
 db: AgnosticDatabase = AsyncIOMotorClient(
-        config.mongo_url, serverSelectionTimeoutMS=3)['bot']
+        config.mongo_url, serverSelectionTimeoutMS=3)['Bot']
 
 user_collection: AgnosticCollection = db.get_collection("user")
 plugin_collection: AgnosticCollection = db.get_collection("plugin")

@@ -25,7 +25,7 @@ async def handle_first_receive(event: GroupMessageEvent):
     message = message_to_text(event.get_message())
 
     if not message:
-        await chat.finish("昂，怎么了嘛")
+        await chat.finish("昂，怎么了嘛")  
     elif message in {"在嘛", "在吗"}:
         await chat.finish("在的呢")
 
