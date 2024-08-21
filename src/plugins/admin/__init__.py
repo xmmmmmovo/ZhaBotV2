@@ -210,7 +210,6 @@ async def handle_plugin_status(bot: Bot, event: GroupMessageEvent):
     mbuilder = Message("插件开启情况如下：\n")
     idx = 0
     for plugin in plugins:
-        logger.debug(plugin)
         if plugin.metadata == None:
             continue
         idx += 1
